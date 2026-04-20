@@ -3,4 +3,12 @@ node_modules/
 db/*.db
 *.db-shm
 *.db-wal
+*.log
+temp-*.html
+*-visual-check.png
+*-chrome.png
+home-fixed.png
+home2.png
+admin.png
+home-dom.txt
 .DS_Store

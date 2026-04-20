@@ -115,7 +115,7 @@ select.input option{background:var(--panel);color:var(--pale)}
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">EAT A LOT</div>
+    <div class="login-logo" id="admin-login-logo">EAT A LOT</div>
     <div class="login-sub">Admin Panel</div>
     <input class="input" type="text" id="un" placeholder="Username" onkeydown="if(event.key==='Enter')login()">
     <input class="input" type="password" id="pw" placeholder="Password" onkeydown="if(event.key==='Enter')login()">
@@ -127,7 +127,7 @@ select.input option{background:var(--panel);color:var(--pale)}
 <!-- APP -->
 <div id="app">
   <aside>
-    <div class="sidebar-logo">EAT A LOT</div>
+    <div class="sidebar-logo" id="admin-sidebar-logo">EAT A LOT</div>
     <div class="sidebar-sub">Admin Panel</div>
     <nav>
       <a href="#" class="active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span>Dashboard</a>
@@ -300,6 +300,22 @@ function getItemImage(name){
   return VISUALS.items?.[name] || '';
 }
 
+function applyAdminBrand(settings = {}){
+  const brand = (settings.restaurant_name || 'Eat A Lot').trim();
+  document.title = `${brand} — Admin`;
+  [document.getElementById('admin-login-logo'), document.getElementById('admin-sidebar-logo')]
+    .forEach(element => { if(element) element.textContent = brand.toUpperCase(); });
+}
+
+async function bootstrapAdminBrand(){
+  try {
+    const res = await fetch('/api/settings');
+    if(!res.ok) return;
+    const payload = await res.json();
+    applyAdminBrand(payload.data || {});
+  } catch {}
+}
+
 /* ── AUTH ─────────────────────────── */
 async function login(){
   const btn = document.getElementById('login-btn');
@@ -422,62 +438,67 @@ async function updateOrderStatus(ref, status){
 
 /* ── MENU ─────────────────────────── */
 async function loadMenuAdmin(){
-  const [menuData, catData] = await Promise.all([api('/menu'), api('/admin/categories')]);
+  const [itemsData, catData] = await Promise.all([api('/admin/menu-items'), api('/admin/categories')]);
   allCategories = catData.data || [];
-  allMenuItems = menuData.data?.flatMap(c=>c.items.map(i=>({
-    ...i,
-    cat_name:c.name,
-    cat_emoji:c.emoji,
-    image:getItemImage(i.name),
-  }))) || [];
-  // Populate cat filter
+  allMenuItems = (itemsData.data || []).map(item => ({
+    ...item,
+    cat_name: item.category_name,
+    cat_emoji: item.category_emoji,
+    image: getItemImage(item.name),
+  }));
+
   const sel = document.getElementById('menu-cat-filter');
-  sel.innerHTML = '<option value="">All Categories</option>' + allCategories.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
-  // Item modal cats
-  document.getElementById('item-cat').innerHTML = allCategories.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  sel.innerHTML = '<option value="">All Categories</option>' + allCategories.map(category => `<option value="${category.id}">${category.emoji} ${category.name}</option>`).join('');
+  document.getElementById('item-cat').innerHTML = allCategories.map(category => `<option value="${category.id}">${category.emoji} ${category.name}</option>`).join('');
   renderMenuTable();
 }
+
 function renderMenuTable(){
   const q = document.getElementById('menu-search')?.value.toLowerCase() || '';
   const catFilter = document.getElementById('menu-cat-filter')?.value || '';
-  const filtered = allMenuItems.filter(i=>{
-    const matchQ = i.name.toLowerCase().includes(q);
-    const matchC = !catFilter || i.category_id == catFilter;
-    return matchQ && matchC;
+  const filtered = allMenuItems.filter(item => {
+    const matchQ = item.name.toLowerCase().includes(q);
+    const matchCategory = !catFilter || item.category_id == catFilter;
+    return matchQ && matchCategory;
   });
   const tbody = document.getElementById('menu-body');
-  if(!filtered.length){ tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🍴</div>No items found</div></td></tr>'; return; }
-  tbody.innerHTML = filtered.map(i=>`
+  if(!filtered.length){
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🍴</div>No items found</div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(item => `
     <tr>
       <td>
         <div class="menu-cell">
           <div class="menu-thumb">
-            ${i.image
-              ? `<img src="${i.image}" alt="${escapeHtml(i.name)}" loading="lazy" decoding="async">`
-              : `<div class="menu-thumb-fallback">${escapeHtml(i.emoji)}</div>`}
+            ${item.image
+              ? `<img src="${item.image}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async">`
+              : `<div class="menu-thumb-fallback">${escapeHtml(item.emoji)}</div>`}
           </div>
           <div>
-            <div class="menu-name">${escapeHtml(i.name)}</div>
-            <div class="menu-sub">${escapeHtml(i.emoji)} visual synced to catalog</div>
+            <div class="menu-name">${escapeHtml(item.name)}</div>
+            <div class="menu-sub">${escapeHtml(item.emoji)} visual synced to catalog</div>
           </div>
         </div>
       </td>
-      <td>${escapeHtml(i.cat_emoji)} ${escapeHtml(i.cat_name)}</td>
-      <td style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--gold)">₹${i.price}</td>
-      <td><span class="badge ${i.is_veg?'badge-veg':'badge-nonveg'}">${i.is_veg?'VEG':'NON-VEG'}</span></td>
-      <td><span class="badge ${i.available?'badge-avail':'badge-unavail'}" style="cursor:pointer" onclick="toggleItem(${i.id})">${i.available?'✓ Available':'✗ Hidden'}</span></td>
+      <td>${escapeHtml(item.cat_emoji)} ${escapeHtml(item.cat_name)}</td>
+      <td style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--gold)">₹${item.price}</td>
+      <td><span class="badge ${item.is_veg ? 'badge-veg' : 'badge-nonveg'}">${item.is_veg ? 'VEG' : 'NON-VEG'}</span></td>
+      <td><span class="badge ${item.available ? 'badge-avail' : 'badge-unavail'}" style="cursor:pointer" onclick="toggleItem(${item.id})">${item.available ? '✓ Available' : '✗ Hidden'}</span></td>
       <td style="display:flex;gap:.5rem">
-        <button class="btn btn-ghost btn-sm" onclick="openItemModal(${i.id})">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteItem(${i.id})">Del</button>
+        <button class="btn btn-ghost btn-sm" onclick="openItemModal(${item.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.id})">Del</button>
       </td>
     </tr>
   `).join('');
 }
+
 function openItemModal(id){
   document.getElementById('item-id').value = id || '';
   document.getElementById('item-modal-title').textContent = id ? 'Edit Item' : 'Add Item';
   if(id){
-    const item = allMenuItems.find(i=>i.id==id);
+    const item = allMenuItems.find(entry => entry.id == id);
     if(!item) return;
     document.getElementById('item-cat').value = item.category_id;
     document.getElementById('item-name').value = item.name;
@@ -488,10 +509,18 @@ function openItemModal(id){
     document.getElementById('item-veg').value = item.is_veg;
     document.getElementById('item-feat').value = item.is_featured;
   } else {
-    ['item-name','item-emoji','item-desc','item-price','item-sort'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('item-cat').value = allCategories[0]?.id || '';
+    document.getElementById('item-name').value = '';
+    document.getElementById('item-emoji').value = '';
+    document.getElementById('item-desc').value = '';
+    document.getElementById('item-price').value = '';
+    document.getElementById('item-sort').value = '';
+    document.getElementById('item-veg').value = '1';
+    document.getElementById('item-feat').value = '0';
   }
   document.getElementById('item-modal').classList.add('open');
 }
+
 async function saveItem(){
   const id = document.getElementById('item-id').value;
   const body = {
@@ -500,62 +529,110 @@ async function saveItem(){
     emoji: document.getElementById('item-emoji').value || '🍴',
     description: document.getElementById('item-desc').value,
     price: parseFloat(document.getElementById('item-price').value),
-    sort_order: parseInt(document.getElementById('item-sort').value) || 0,
-    is_veg: parseInt(document.getElementById('item-veg').value),
-    is_featured: parseInt(document.getElementById('item-feat').value),
+    sort_order: parseInt(document.getElementById('item-sort').value, 10) || 0,
+    is_veg: parseInt(document.getElementById('item-veg').value, 10),
+    is_featured: parseInt(document.getElementById('item-feat').value, 10),
   };
-  if(!body.name || !body.price) return toast('❌ Name and price required');
-  if(id){ await api('/menu/items/'+id,{method:'PUT',body:JSON.stringify(body)}); }
-  else { await api('/menu/items',{method:'POST',body:JSON.stringify(body)}); }
-  closeModal('item-modal'); loadMenuAdmin(); toast('✅ Item saved!');
-}
-async function deleteItem(id){
-  if(!confirm('Delete this item?')) return;
-  await api('/menu/items/'+id,{method:'DELETE'});
-  loadMenuAdmin(); toast('Item deleted');
-}
-async function toggleItem(id){
-  const res = await api('/menu/items/'+id+'/toggle',{method:'PATCH'});
-  loadMenuAdmin(); toast(res.available ? '✅ Item available' : '⚫ Item hidden');
+  if(!body.category_id || !body.name || !body.price) return toast('❌ Category, name, and price are required');
+  if(id){
+    await api('/menu/items/' + id, { method:'PUT', body:JSON.stringify(body) });
+  } else {
+    await api('/menu/items', { method:'POST', body:JSON.stringify(body) });
+  }
+  closeModal('item-modal');
+  await loadMenuAdmin();
+  toast('✅ Item saved!');
 }
 
-/* ── CATEGORIES ───────────────────── */
+async function deleteItem(id){
+  if(!confirm('Delete this item?')) return;
+  await api('/menu/items/' + id, { method:'DELETE' });
+  await loadMenuAdmin();
+  toast('Item deleted');
+}
+
+async function toggleItem(id){
+  const res = await api('/menu/items/' + id + '/toggle', { method:'PATCH' });
+  await loadMenuAdmin();
+  toast(res.available ? '✅ Item available' : '⚫ Item hidden');
+}
+
 async function loadCategories(){
-  const data = await api('/admin/categories');
-  const cats = data.data || [];
-  const menuData = await api('/menu');
-  const countMap = {};
-  (menuData.data||[]).forEach(c=>countMap[c.id]=c.items?.length||0);
+  const [catData, itemData] = await Promise.all([api('/admin/categories'), api('/admin/menu-items')]);
+  const cats = catData.data || [];
+  const items = itemData.data || [];
+  allCategories = cats;
+
+  const countMap = items.reduce((acc, item) => {
+    acc[item.category_id] = (acc[item.category_id] || 0) + 1;
+    return acc;
+  }, {});
+
   const tbody = document.getElementById('cats-body');
-  tbody.innerHTML = cats.map(c=>`
+  tbody.innerHTML = cats.map(category => `
     <tr>
-      <td style="font-size:1.5rem">${c.emoji}</td>
-      <td style="font-weight:600">${c.name}</td>
-      <td><code style="font-size:.75rem;color:rgba(255,240,214,.4)">${c.slug}</code></td>
-      <td>${countMap[c.id]||0} items</td>
-      <td><span class="badge ${c.active?'badge-avail':'badge-unavail'}">${c.active?'Active':'Hidden'}</span></td>
-      <td>
-        <button class="btn btn-ghost btn-sm" onclick="toggleCat(${c.id},${c.active?0:1})">${c.active?'Hide':'Show'}</button>
+      <td style="font-size:1.5rem">${escapeHtml(category.emoji)}</td>
+      <td style="font-weight:600">${escapeHtml(category.name)}</td>
+      <td><code style="font-size:.75rem;color:rgba(255,240,214,.4)">${escapeHtml(category.slug)}</code></td>
+      <td>${countMap[category.id] || 0} items</td>
+      <td><span class="badge ${category.active ? 'badge-avail' : 'badge-unavail'}">${category.active ? 'Active' : 'Hidden'}</span></td>
+      <td style="display:flex;gap:.5rem">
+        <button class="btn btn-ghost btn-sm" onclick="openCatModal(${category.id})">Edit</button>
+        <button class="btn btn-ghost btn-sm" onclick="toggleCat(${category.id},${category.active ? 0 : 1})">${category.active ? 'Hide' : 'Show'}</button>
       </td>
     </tr>
   `).join('');
 }
-function openCatModal(){ document.getElementById('cat-modal').classList.add('open'); }
-async function saveCat(){
-  const body = {name:document.getElementById('cat-name').value,emoji:document.getElementById('cat-emoji').value||'🍴',slug:document.getElementById('cat-slug').value,sort_order:parseInt(document.getElementById('cat-sort').value)||0};
-  if(!body.name||!body.slug) return toast('❌ Name and slug required');
-  await api('/admin/categories',{method:'POST',body:JSON.stringify(body)});
-  closeModal('cat-modal'); loadCategories(); toast('✅ Category added!');
-}
-async function toggleCat(id, active){
-  await api('/admin/categories/'+id,{method:'PUT',body:JSON.stringify({active})});
-  loadCategories(); toast(active?'✅ Category active':'⚫ Category hidden');
+
+function openCatModal(id){
+  const modal = document.getElementById('cat-modal');
+  const title = modal.querySelector('.modal-title');
+  const category = id ? allCategories.find(entry => entry.id == id) : null;
+  modal.dataset.categoryId = id || '';
+  title.textContent = category ? 'Edit Category' : 'Add Category';
+  document.getElementById('cat-name').value = category?.name || '';
+  document.getElementById('cat-emoji').value = category?.emoji || '';
+  document.getElementById('cat-slug').value = category?.slug || '';
+  document.getElementById('cat-sort').value = category?.sort_order ?? '';
+  modal.classList.add('open');
 }
 
-/* ── SETTINGS ─────────────────────── */
+async function saveCat(){
+  const modal = document.getElementById('cat-modal');
+  const categoryId = modal.dataset.categoryId || '';
+  const body = {
+    name: document.getElementById('cat-name').value,
+    emoji: document.getElementById('cat-emoji').value || '🍴',
+    slug: document.getElementById('cat-slug').value,
+    sort_order: parseInt(document.getElementById('cat-sort').value, 10) || 0,
+  };
+  if(!body.name || !body.slug) return toast('❌ Name and slug required');
+
+  if(categoryId){
+    await api('/admin/categories/' + categoryId, { method:'PUT', body:JSON.stringify(body) });
+    toast('✅ Category updated!');
+  } else {
+    await api('/admin/categories', { method:'POST', body:JSON.stringify(body) });
+    toast('✅ Category added!');
+  }
+
+  closeModal('cat-modal');
+  await loadCategories();
+}
+
+async function toggleCat(id, active){
+  await api('/admin/categories/' + id, { method:'PUT', body:JSON.stringify({ active }) });
+  await loadCategories();
+  if(document.getElementById('page-menu').classList.contains('active')){
+    await loadMenuAdmin();
+  }
+  toast(active ? '✅ Category active' : '⚫ Category hidden');
+}
+
 async function loadSettings(){
   const data = await api('/admin/settings');
   const s = data.data;
+  applyAdminBrand(s);
   document.getElementById('s-name').value = s.restaurant_name||'';
   document.getElementById('s-tagline').value = s.tagline||'';
   document.getElementById('s-wa').value = s.whatsapp||'';
@@ -578,6 +655,7 @@ async function saveSettings(){
     is_open: document.getElementById('s-open-toggle').classList.contains('on') ? '1' : '0',
   };
   await api('/admin/settings',{method:'PUT',body:JSON.stringify(body)});
+  applyAdminBrand(body);
   toast('✅ Settings saved!');
 }
 
@@ -591,6 +669,8 @@ async function init(){
     const me = await api('/admin/me');
     if(!me.admin) throw new Error('Session expired. Please sign in again.');
     document.getElementById('admin-name').textContent = 'Logged in as '+me.admin.username;
+    const settings = await api('/admin/settings');
+    applyAdminBrand(settings.data);
     await loadDashboard();
   } catch (error) {
     handleAdminError(error, 'Could not load admin');
@@ -599,6 +679,7 @@ async function init(){
 }
 
 // Auto-login if token exists
+bootstrapAdminBrand();
 if(TOKEN){
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').classList.add('visible');

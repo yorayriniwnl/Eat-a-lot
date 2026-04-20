@@ -34,9 +34,10 @@ router.post('/', (req, res) => {
     validatedItems.push({ id: dbItem.id, name: dbItem.name, price: dbItem.price, qty, emoji: dbItem.emoji });
   }
 
-  const settings = getSiteSettings('is_open', 'whatsapp');
+  const settings = getSiteSettings('is_open', 'whatsapp', 'restaurant_name');
+  const brand = (settings.restaurant_name || 'Eat A Lot').trim();
   if (settings.is_open === '0') {
-    return res.status(403).json({ error: 'Eat A Lot is currently closed for orders.' });
+    return res.status(403).json({ error: `${brand} is currently closed for orders.` });
   }
 
   const waNumber = (settings.whatsapp || '').trim();
@@ -52,7 +53,7 @@ router.post('/', (req, res) => {
   `).run(ref, customer_name || 'Guest', customer_phone || '', JSON.stringify(validatedItems), total, note || '');
 
   const msgLines = [
-    '🔥 *New Order - Eat A Lot*',
+    `🔥 *New Order - ${brand}*`,
     `📋 Ref: ${ref}`,
     `👤 Name: ${customer_name || 'Guest'}`,
     `📞 Phone: ${customer_phone || 'N/A'}`,

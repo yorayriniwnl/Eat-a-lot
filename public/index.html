@@ -181,6 +181,8 @@ footer{position:relative;z-index:2;border-top:1px solid rgba(255,179,0,.07);padd
 .flinks{display:flex;gap:2.5rem;list-style:none}
 .flinks a{text-decoration:none;color:rgba(255,240,214,.25);font-size:.75rem;letter-spacing:1px;transition:color .3s}
 .flinks a:hover{color:var(--gold)}
+.footer-meta{display:flex;gap:1rem;flex-wrap:wrap;font-size:.72rem;color:rgba(255,240,214,.28)}
+.footer-meta span{padding:.3rem .65rem;border-radius:999px;border:1px solid rgba(255,179,0,.12);background:rgba(255,255,255,.02)}
 .fcopy{font-size:.7rem;color:rgba(255,240,214,.15)}
 /* CART DRAWER */
 #cart-drawer{position:fixed;top:0;right:-440px;width:420px;height:100vh;background:rgba(8,4,0,.97);border-left:1px solid rgba(255,179,0,.1);z-index:200;transition:right .5s cubic-bezier(.25,.46,.45,.94);backdrop-filter:blur(30px);display:flex;flex-direction:column}
@@ -217,6 +219,8 @@ footer{position:relative;z-index:2;border-top:1px solid rgba(255,179,0,.07);padd
 .btn-checkout{width:100%;padding:1rem;border-radius:100px;background:linear-gradient(135deg,var(--ember),var(--lava));border:none;color:#fff;font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;cursor:none;transition:all .3s;box-shadow:0 4px 20px rgba(255,58,0,.4)}
 .btn-checkout:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,58,0,.6)}
 .btn-checkout:disabled{opacity:.5;transform:none}
+.cart-note{margin-top:.9rem;font-size:.78rem;line-height:1.6;color:rgba(255,240,214,.42)}
+.cart-note.closed{color:#fca5a5}
 /* OVERLAY */
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:190;opacity:0;visibility:hidden;transition:all .3s;backdrop-filter:blur(4px)}
 #overlay.on{opacity:1;visibility:visible}
@@ -253,8 +257,8 @@ footer{position:relative;z-index:2;border-top:1px solid rgba(255,179,0,.07);padd
 
 <div id="loader">
   <div class="ld-emoji">🍔</div>
-  <div class="ld-title">EAT A LOT</div>
-  <div class="ld-sub">Born to be Devoured</div>
+  <div class="ld-title" id="brand-loader">EAT A LOT</div>
+  <div class="ld-sub" id="brand-loader-tagline">Born to be Devoured</div>
   <div class="ld-bar"><div class="ld-fill"></div></div>
 </div>
 
@@ -387,7 +391,7 @@ footer{position:relative;z-index:2;border-top:1px solid rgba(255,179,0,.07);padd
 <section id="stats"><div class="sec-inner" style="padding-top:5rem;padding-bottom:5rem">
   <div class="stats-row">
     <div class="st reveal"><div class="st-num" id="sn1">30+</div><div class="st-lab">Menu Items</div></div>
-    <div class="st reveal" style="transition-delay:.1s"><div class="st-num">24/7</div><div class="st-lab">Always Open</div></div>
+    <div class="st reveal" style="transition-delay:.1s"><div class="st-num" id="sn2">24/7</div><div class="st-lab" id="sl2">Always Open</div></div>
     <div class="st reveal" style="transition-delay:.2s"><div class="st-num">100%</div><div class="st-lab">Made Fresh</div></div>
     <div class="st reveal" style="transition-delay:.3s"><div class="st-num">⭐ 5.0</div><div class="st-lab">Customer Love</div></div>
   </div>
@@ -401,13 +405,13 @@ footer{position:relative;z-index:2;border-top:1px solid rgba(255,179,0,.07);padd
     <div class="why-visual reveal" style="perspective:1200px">
       <div class="wv-card wvc1 tilt-card"><div class="card-shine"></div><div class="wve">🌶️</div><div class="wvt">Secret Pahadi Spice Blends</div><div class="wvd">Hill-station masalas that bring a depth of flavour no other joint can replicate.</div></div>
       <div class="wv-card wvc3 tilt-card"><div class="card-shine"></div><div class="wve">🧑‍🍳</div><div class="wvt">Made Live, Every Order</div><div class="wvd">No batch prep. No shortcuts. Your order triggers the cook — fresh, every time.</div></div>
-      <div class="wv-card wvc2 tilt-card"><div class="card-shine"></div><div class="wve">🏆</div><div class="wvt">Loved Across Patna</div><div class="wvd">Late-night students, morning workers, weekend families — everyone has their Eat A Lot moment.</div></div>
+      <div class="wv-card wvc2 tilt-card"><div class="card-shine"></div><div class="wve">🏆</div><div class="wvt" id="why-location-title">Loved Across Patna</div><div class="wvd" id="why-location-copy">Late-night students, morning workers, weekend families — everyone has their Eat A Lot moment.</div></div>
     </div>
     <div>
       <div class="sec-kicker reveal">✦ Why We're Different ✦</div>
-      <h2 class="sec-h reveal" style="margin-bottom:3rem">Why <em>Eat A Lot</em><br><strong>Hits Different</strong></h2>
+      <h2 class="sec-h reveal" style="margin-bottom:3rem">Why <em id="why-brand">Eat A Lot</em><br><strong>Hits Different</strong></h2>
       <div class="why-feats">
-        <div class="wf reveal"><div class="wf-icon">⚡</div><div><div class="wf-t">Open 24 Hours, No Exceptions</div><div class="wf-d">2am hunger. 5am craving. We're always on, always cooking, never closed.</div></div></div>
+        <div class="wf reveal"><div class="wf-icon">⚡</div><div><div class="wf-t" id="why-status-title">Open 24 Hours, No Exceptions</div><div class="wf-d" id="why-status-copy">2am hunger. 5am craving. We're always on, always cooking, never closed.</div></div></div>
         <div class="wf reveal" style="transition-delay:.08s"><div class="wf-icon">🏔️</div><div><div class="wf-t">Authentic Pahadi Flavours</div><div class="wf-d">Signature Pahadi masala and Sezwan preparations — mountain-bold, street-honest.</div></div></div>
         <div class="wf reveal" style="transition-delay:.16s"><div class="wf-icon">💰</div><div><div class="wf-t">Pocket-Friendly Prices</div><div class="wf-d">Starting at just ₹19. Every rupee delivers maximum deliciousness, zero compromise.</div></div></div>
         <div class="wf reveal" style="transition-delay:.24s"><div class="wf-icon">📦</div><div><div class="wf-t">Order via WhatsApp</div><div class="wf-d">Browse, pick, confirm — all in WhatsApp chat. No apps, no hassle. Just food.</div></div></div>
@@ -460,6 +464,19 @@ const finePointer = window.matchMedia('(pointer: fine)').matches;
 const canUseInteractiveMotion = finePointer && !prefersReducedMotion;
 const canUseWebGL = !prefersReducedMotion && typeof window.WebGLRenderingContext !== 'undefined';
 const VISUALS = window.EAT_A_LOT_VISUALS || { brandBanner: '', categories: {}, heroCards: [], items: {} };
+const DEFAULT_SITE_SETTINGS = {
+  restaurant_name: 'Eat A Lot',
+  tagline: 'Born to be Devoured',
+  whatsapp: '',
+  whatsapp_catalog_url: '',
+  instagram: 'https://www.instagram.com/eat_a_lot_08/',
+  is_open: '1',
+  open_hours: 'Open 24 Hours',
+  address: 'Patna, Bihar',
+};
+let siteSettings = { ...DEFAULT_SITE_SETTINGS };
+let orderSubmitting = false;
+let featuredItems = [];
 
 function escapeHtml(value = ''){
   return String(value).replace(/[&<>"']/g, char => ({
@@ -471,6 +488,37 @@ function escapeHtml(value = ''){
   }[char]));
 }
 
+function escapeJsString(value = ''){
+  return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function getLocationLabel(address = ''){
+  const segments = String(address).split(',').map(part => part.trim()).filter(Boolean);
+  return segments[0] || String(address).trim() || DEFAULT_SITE_SETTINGS.address;
+}
+
+function ensureCartNote(){
+  let note = document.getElementById('cart-note');
+  if(!note){
+    note = document.createElement('div');
+    note.id = 'cart-note';
+    note.className = 'cart-note';
+    document.getElementById('checkout-btn')?.insertAdjacentElement('afterend', note);
+  }
+  return note;
+}
+
+function ensureFooterMeta(){
+  let meta = document.querySelector('.footer-meta');
+  if(!meta){
+    meta = document.createElement('div');
+    meta.className = 'footer-meta';
+    meta.innerHTML = '<span></span><span></span>';
+    document.querySelector('footer > div')?.appendChild(meta);
+  }
+  return meta;
+}
+
 function getItemImage(name){
   return VISUALS.items?.[name] || '';
 }
@@ -480,14 +528,127 @@ function getCategoryImage(category){
   return VISUALS.categories?.[category.slug] || (category.items || []).map(item => item.image || getItemImage(item.name)).find(Boolean) || '';
 }
 
+function updateCheckoutState(){
+  const btn = document.getElementById('checkout-btn');
+  const note = ensureCartNote();
+  const storeOpen = siteSettings.is_open !== '0';
+  const hasItems = cartCount() > 0;
+
+  if(btn){
+    btn.disabled = orderSubmitting || !storeOpen || !hasItems;
+    if(orderSubmitting){
+      btn.textContent = 'Placing order...';
+    } else if(storeOpen) {
+      btn.textContent = 'Place Order via WhatsApp 🔥';
+    } else {
+      btn.textContent = 'Ordering Paused';
+    }
+  }
+
+  note.textContent = storeOpen
+    ? 'Orders are sent straight to WhatsApp for confirmation.'
+    : `${siteSettings.restaurant_name || 'Eat A Lot'} is currently closed for orders. ${siteSettings.open_hours || 'Please check back soon.'}`;
+  note.classList.toggle('closed', !storeOpen);
+}
+
+function syncSiteSettings(){
+  const brand = (siteSettings.restaurant_name || DEFAULT_SITE_SETTINGS.restaurant_name).trim();
+  const tagline = (siteSettings.tagline || DEFAULT_SITE_SETTINGS.tagline).trim();
+  const hours = (siteSettings.open_hours || DEFAULT_SITE_SETTINGS.open_hours).trim();
+  const address = (siteSettings.address || DEFAULT_SITE_SETTINGS.address).trim();
+  const storeOpen = siteSettings.is_open !== '0';
+  const statusLabel = storeOpen ? hours : 'Currently closed';
+  const statusText = `${statusLabel} · ${address}`;
+  const locationLabel = getLocationLabel(address);
+
+  document.title = `${brand} — ${tagline}`;
+  (document.getElementById('brand-loader') || document.querySelector('.ld-title')).textContent = brand.toUpperCase();
+  (document.getElementById('brand-loader-tagline') || document.querySelector('.ld-sub')).textContent = tagline;
+  document.querySelector('.nl').textContent = brand.toUpperCase();
+  document.querySelector('.fl').textContent = brand.toUpperCase();
+  document.querySelector('.fsub').textContent = `${tagline} · ${statusLabel}`;
+  document.querySelector('.fcopy').textContent = `© 2026 ${brand}. ${address}`;
+
+  const whyBrand = document.getElementById('why-brand');
+  if(whyBrand) whyBrand.textContent = brand;
+
+  const heroPill = document.querySelector('.h-pill');
+  if(heroPill){
+    if(!heroPill.querySelector('.h-pill-text')){
+      heroPill.innerHTML = '<span class="h-pip"></span><span class="h-pill-text"></span>';
+    }
+    const pillText = heroPill.querySelector('.h-pill-text');
+    pillText.textContent = statusText;
+    const dot = heroPill.querySelector('.h-pip');
+    if(dot) dot.style.background = storeOpen ? '#FF3A00' : '#EF4444';
+  }
+
+  const heroHours = document.querySelector('.hb2-text');
+  if(heroHours) heroHours.textContent = storeOpen ? hours : 'Orders paused';
+  const heroHoursDot = document.querySelector('.hb2-dot');
+  if(heroHoursDot) heroHoursDot.style.background = storeOpen ? '#22C55E' : '#EF4444';
+
+  const whyStatusTitle = document.getElementById('why-status-title');
+  if(whyStatusTitle) whyStatusTitle.textContent = storeOpen ? `${hours}, Fresh Every Time` : 'Ordering Is Paused Right Now';
+  const whyStatusCopy = document.getElementById('why-status-copy');
+  if(whyStatusCopy){
+    whyStatusCopy.textContent = storeOpen
+      ? `Message ${brand} on WhatsApp whenever hunger hits and we will cook it fresh to order.`
+      : `The full catalog is still live, but new WhatsApp orders are paused right now. Check back during ${hours}.`;
+  }
+
+  const whyLocationTitle = document.getElementById('why-location-title');
+  if(whyLocationTitle) whyLocationTitle.textContent = `Loved Across ${locationLabel}`;
+  const whyLocationCopy = document.getElementById('why-location-copy');
+  if(whyLocationCopy){
+    whyLocationCopy.textContent = `${locationLabel} regulars keep ${brand} in rotation for late-night cravings, quick comfort food, and easy WhatsApp ordering.`;
+  }
+
+  const statStatus = document.getElementById('sn2');
+  if(statStatus) statStatus.textContent = storeOpen ? (hours.toLowerCase().includes('24') ? '24/7' : 'OPEN') : 'PAUSED';
+  const statStatusLabel = document.getElementById('sl2');
+  if(statStatusLabel) statStatusLabel.textContent = storeOpen ? hours : 'Currently Closed';
+
+  const heroCopy = document.querySelector('.h-sub');
+  if(heroCopy){
+    heroCopy.innerHTML = `${escapeHtml(tagline)}<br><em>${escapeHtml(address)}</em>`;
+  }
+
+  const footerMeta = ensureFooterMeta();
+  const [hoursEl, addressEl] = footerMeta.querySelectorAll('span');
+  if(hoursEl) hoursEl.textContent = statusLabel;
+  if(addressEl) addressEl.textContent = address;
+
+  const footerMenuLink = document.querySelector('.flinks a[href="#cats"]');
+  if(footerMenuLink) footerMenuLink.setAttribute('href', '#menu');
+
+  renderHeroGallery();
+  updateCheckoutState();
+}
+
+function focusCategory(slug){
+  const filterButton = document.querySelector(`[data-cat="${slug}"]`);
+  filterMenu(slug, filterButton);
+  document.getElementById('menu')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function renderHeroGallery(){
   const heroGallery = document.getElementById('hero-gallery');
   if(!heroGallery) return;
 
-  const heroCards = (VISUALS.heroCards || []).slice(0, 3);
+  const brand = (siteSettings.restaurant_name || DEFAULT_SITE_SETTINGS.restaurant_name).trim();
+  const liveFeaturedCards = featuredItems
+    .map(item => ({
+      name: item.name,
+      label: item.category_name || 'Featured',
+      image: item.image || getItemImage(item.name),
+    }))
+    .filter(card => card.image);
+  const fallbackCards = (VISUALS.heroCards || []).slice(0, 3);
+  const heroCards = (liveFeaturedCards.length ? liveFeaturedCards : fallbackCards).slice(0, 3);
   const bannerMarkup = VISUALS.brandBanner
-    ? `<img class="hero-banner-image" src="${VISUALS.brandBanner}" alt="Eat A Lot catalog banner" loading="eager" decoding="async">`
-    : '<div class="hero-banner-fallback">EAT A LOT</div>';
+    ? `<img class="hero-banner-image" src="${VISUALS.brandBanner}" alt="${escapeHtml(brand)} catalog banner" loading="eager" decoding="async">`
+    : `<div class="hero-banner-fallback">${escapeHtml(brand.toUpperCase())}</div>`;
 
   heroGallery.innerHTML = `
     <div class="hero-banner-card">
@@ -495,7 +656,7 @@ function renderHeroGallery(){
       <div class="hero-banner-scrim"></div>
       <div class="hero-banner-copy">
         <div class="hero-banner-kicker">WhatsApp Catalog Visuals</div>
-        <div class="hero-banner-title">Real menu photos, straight from Eat A Lot.</div>
+        <div class="hero-banner-title">Real menu photos, straight from ${escapeHtml(brand)}.</div>
       </div>
     </div>
     <div class="hero-thumb-row">
@@ -693,45 +854,51 @@ if(canUseInteractiveMotion){
 
 /* ── CART STATE ─────────────────────────── */
 let cart = {};
-function cartCount(){ return Object.values(cart).reduce((a,v)=>a+v.qty,0); }
-function cartTotal(){ return Object.values(cart).reduce((a,v)=>a+v.price*v.qty,0); }
+let allItems = [];
+let allCategories = [];
+
+function cartCount(){ return Object.values(cart).reduce((sum, item) => sum + item.qty, 0); }
+function cartTotal(){ return Object.values(cart).reduce((sum, item) => sum + (item.price * item.qty), 0); }
 
 function addToCart(id, name, price, emoji){
   if(cart[id]){
-    cart[id].qty++;
+    cart[id].qty += 1;
   } else {
-    cart[id]={id,name,price,emoji,image:getItemImage(name),qty:1};
+    cart[id] = { id, name, price, emoji, image: getItemImage(name), qty: 1 };
   }
   updateCartUI();
   toast(`${emoji} ${name} added to cart!`);
 }
+
 function changeQty(id, delta){
   if(!cart[id]) return;
   cart[id].qty += delta;
   if(cart[id].qty <= 0) delete cart[id];
   updateCartUI();
 }
+
 function updateCartUI(){
   const count = cartCount();
   const navBtn = document.querySelector('.nbtn');
   const badge = document.getElementById('cart-badge');
-  badge.textContent = count;
-  navBtn.classList.toggle('has-items', count > 0);
-  badge.style.display = count > 0 ? 'flex' : 'none';
-
   const list = document.getElementById('cart-items-list');
   const footer = document.getElementById('cart-footer');
   const totalEl = document.getElementById('cart-total-val');
   const items = Object.values(cart);
-  if(items.length === 0){
+
+  badge.textContent = count;
+  navBtn.classList.toggle('has-items', count > 0);
+  badge.style.display = count > 0 ? 'flex' : 'none';
+
+  if(!items.length){
     list.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div>Your cart is empty</div></div>';
     footer.style.display = 'none';
   } else {
-    list.innerHTML = items.map(item=>`
+    list.innerHTML = items.map(item => `
       <div class="cart-item">
         ${item.image
           ? `<div class="ci-thumb"><img src="${item.image}" alt="${escapeHtml(item.name)}" loading="lazy" decoding="async"></div>`
-          : `<div class="ci-emoji">${item.emoji}</div>`}
+          : `<div class="ci-emoji">${escapeHtml(item.emoji)}</div>`}
         <div class="ci-info">
           <div class="ci-name">${escapeHtml(item.name)}</div>
           <div class="ci-price">₹${(item.price * item.qty).toFixed(0)}</div>
@@ -744,94 +911,119 @@ function updateCartUI(){
       </div>
     `).join('');
     footer.style.display = 'block';
-    totalEl.textContent = '₹'+cartTotal().toFixed(0);
+    totalEl.textContent = `₹${cartTotal().toFixed(0)}`;
   }
+
+  updateCheckoutState();
 }
-function openCart(){ document.getElementById('cart-drawer').classList.add('open'); document.getElementById('overlay').classList.add('on'); }
-function closeCart(){ document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('on'); }
+
+function openCart(){
+  document.getElementById('cart-drawer').classList.add('open');
+  document.getElementById('overlay').classList.add('on');
+  updateCheckoutState();
+}
+
+function closeCart(){
+  document.getElementById('cart-drawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('on');
+}
 
 async function placeOrder(){
-  const btn = document.getElementById('checkout-btn');
-  btn.disabled = true; btn.textContent = 'Placing order...';
-  const items = Object.values(cart).map(i=>({id:i.id,qty:i.qty}));
+  if(orderSubmitting) return;
+  if(cartCount() === 0){
+    toast('🛒 Add something to your cart first.');
+    return;
+  }
+  if(siteSettings.is_open === '0'){
+    toast(`⏸ ${siteSettings.restaurant_name || 'Eat A Lot'} is currently closed for orders.`);
+    return;
+  }
+
+  orderSubmitting = true;
+  updateCheckoutState();
+
   try {
     const res = await fetch('/api/orders', {
-      method:'POST', headers:{'Content-Type':'application/json'},
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         customer_name: document.getElementById('cust-name').value,
         customer_phone: document.getElementById('cust-phone').value,
         note: document.getElementById('cust-note').value,
-        items,
-      })
+        items: Object.values(cart).map(item => ({ id: item.id, qty: item.qty })),
+      }),
     });
     const data = await res.json();
+
     if(data.success){
       cart = {};
       updateCartUI();
       closeCart();
       toast('🎉 Order placed! Redirecting to WhatsApp...');
-      setTimeout(()=>window.open(data.whatsapp_link,'_blank'), 1000);
+      setTimeout(() => window.open(data.whatsapp_link, '_blank'), 1000);
     } else {
-      toast('❌ ' + (data.error || 'Order failed'));
+      toast(`❌ ${data.error || 'Order failed'}`);
     }
-  } catch(e){ toast('❌ Network error. Please try again.'); }
-  finally { btn.disabled = false; btn.textContent = 'Place Order via WhatsApp 🔥'; }
+  } catch (error) {
+    toast('❌ Network error. Please try again.');
+  } finally {
+    orderSubmitting = false;
+    updateCheckoutState();
+  }
 }
-
-/* ── API: LOAD MENU ──────────────────────── */
-let allItems = [], allCategories = [];
 
 async function loadMenu(){
   try {
     const res = await fetch('/api/menu');
     const data = await res.json();
+
     allCategories = (data.data || []).map(category => {
       const items = (category.items || []).map(item => ({ ...item, image: getItemImage(item.name) }));
       return { ...category, items, coverImage: getCategoryImage({ ...category, items }) };
     });
-    allItems = allCategories.flatMap(c=>c.items.map(i=>({
-      ...i,
-      category_name:c.name,
-      category_emoji:c.emoji,
-      category_slug:c.slug,
-      image:i.image || '',
-    })));
 
-    // Render categories
+    allItems = allCategories.flatMap(category => category.items.map(item => ({
+      ...item,
+      category_name: category.name,
+      category_emoji: category.emoji,
+      category_slug: category.slug,
+      image: item.image || '',
+    })));
+    featuredItems = allItems.filter(item => item.is_featured);
+    renderHeroGallery();
+
     const catGrid = document.getElementById('cat-grid');
-    catGrid.innerHTML = allCategories.map(cat=>`
-      <div class="cat tilt-card reveal" onclick="filterMenu('${cat.slug}', document.querySelector('[data-cat=\\'${cat.slug}\\']'))">
+    catGrid.innerHTML = allCategories.map(category => `
+      <div class="cat tilt-card reveal" onclick="focusCategory('${category.slug}')">
         <div class="card-shine"></div>
         <div class="cat-emoji-bg">
-          ${cat.coverImage
-            ? `<img class="cat-photo" src="${cat.coverImage}" alt="${escapeHtml(cat.name)} category" loading="lazy" decoding="async">`
-            : escapeHtml(cat.emoji)}
+          ${category.coverImage
+            ? `<img class="cat-photo" src="${category.coverImage}" alt="${escapeHtml(category.name)} category" loading="lazy" decoding="async">`
+            : escapeHtml(category.emoji)}
           <div class="cat-media-wash"></div>
         </div>
-        <div class="cat-emoji-chip">${escapeHtml(cat.emoji)}</div>
+        <div class="cat-emoji-chip">${escapeHtml(category.emoji)}</div>
         <div class="cat-ink"></div>
         <div class="cat-info">
-          <div class="cat-n">${escapeHtml(cat.name)}</div>
-          <div class="cat-c">${cat.items.length} items · from ₹${Math.min(...cat.items.map(i=>i.price))}</div>
+          <div class="cat-n">${escapeHtml(category.name)}</div>
+          <div class="cat-c">${category.items.length} items · from ₹${Math.min(...category.items.map(item => item.price))}</div>
         </div>
         <div class="cat-glow"></div>
       </div>
     `).join('');
 
-    // Build filter buttons
     const filterRow = document.getElementById('filter-row');
     filterRow.innerHTML = '<button class="fb on" data-cat="all" onclick="filterMenu(\'all\',this)">All</button>' +
-      allCategories.map(c=>`<button class="fb" data-cat="${c.slug}" onclick="filterMenu('${c.slug}',this)">${escapeHtml(c.emoji)} ${escapeHtml(c.name)}</button>`).join('');
+      allCategories.map(category => `<button class="fb" data-cat="${category.slug}" onclick="filterMenu('${category.slug}',this)">${escapeHtml(category.emoji)} ${escapeHtml(category.name)}</button>`).join('');
 
     renderMenuItems(allItems);
+    const statCounter = document.getElementById('sn1');
+    if(statCounter) statCounter.textContent = `${allItems.length}+`;
 
-    // Re-observe for reveal
-    document.querySelectorAll('.reveal:not(.on)').forEach(el=>ro.observe(el));
-
-    // Tilt on new cats
-    document.querySelectorAll('.cat.tilt-card').forEach(card=>bindTiltCard(card));
-  } catch(e){
-    console.error('Menu load failed',e);
+    document.querySelectorAll('.reveal:not(.on)').forEach(element => ro.observe(element));
+    document.querySelectorAll('.cat.tilt-card').forEach(card => bindTiltCard(card));
+  } catch (error) {
+    console.error('Menu load failed', error);
     document.getElementById('cat-grid').innerHTML = '<div class="cat" style="height:250px;display:flex;align-items:center;justify-content:center;padding:1.5rem;text-align:center;color:rgba(255,240,214,.45)">Menu categories are unavailable right now.</div>';
     document.getElementById('menu-grid').innerHTML = '<div class="mc" style="padding:2rem;text-align:center;color:rgba(255,240,214,.45)">We could not load the menu right now. Please refresh in a moment.</div>';
   } finally {
@@ -841,8 +1033,13 @@ async function loadMenu(){
 
 function renderMenuItems(items){
   const grid = document.getElementById('menu-grid');
-  grid.innerHTML = items.map((item,idx)=>`
-    <div class="mc tilt-card reveal" data-c="${item.category_id}" style="transition-delay:${(idx%3)*.08}s">
+  if(!items.length){
+    grid.innerHTML = '<div class="mc" style="padding:2rem;text-align:center;color:rgba(255,240,214,.45)">No items are available in this category right now.</div>';
+    return;
+  }
+
+  grid.innerHTML = items.map((item, idx) => `
+    <div class="mc tilt-card reveal" data-c="${item.category_id}" style="transition-delay:${(idx % 3) * .08}s">
       <div class="card-shine"></div>
       <div class="mc-top">
         ${item.image
@@ -850,74 +1047,90 @@ function renderMenuItems(items){
           : `<span class="mc-emoji">${escapeHtml(item.emoji)}</span>`}
         <div class="mc-shine"></div>
       </div>
-      <div class="mc-veg ${item.is_veg?'veg':'nonveg'}">${item.is_veg?'VEG':'NON-VEG'}</div>
+      <div class="mc-veg ${item.is_veg ? 'veg' : 'nonveg'}">${item.is_veg ? 'VEG' : 'NON-VEG'}</div>
       <div class="mc-body">
         <div class="mc-cat">${escapeHtml(item.category_name)}</div>
         <div class="mc-name">${escapeHtml(item.name)}</div>
-        <div class="mc-desc">${escapeHtml(item.description||'')}</div>
+        <div class="mc-desc">${escapeHtml(item.description || '')}</div>
         <div class="mc-foot">
           <div class="mc-price">₹${item.price}</div>
-          <button class="mc-add" onclick="addToCart(${item.id},'${item.name.replace(/'/g,"\\'")}',${item.price},'${item.emoji}')">+</button>
+          <button class="mc-add" onclick="addToCart(${item.id},'${escapeJsString(item.name)}',${item.price},'${escapeJsString(item.emoji)}')">+</button>
         </div>
       </div>
     </div>
   `).join('');
-  document.querySelectorAll('.mc.tilt-card').forEach(card=>bindTiltCard(card, 14, 10, 8));
-  document.querySelectorAll('.mc.reveal').forEach(el=>ro.observe(el));
+
+  document.querySelectorAll('.mc.tilt-card').forEach(card => bindTiltCard(card, 14, 10, 8));
+  document.querySelectorAll('.mc.reveal').forEach(element => ro.observe(element));
 }
 
-function filterMenu(cat, btn){
-  document.querySelectorAll('.fb').forEach(b=>b.classList.remove('on'));
-  if(btn) btn.classList.add('on');
-  const filtered = cat==='all' ? allItems : allItems.filter(i=>{
-    const c = allCategories.find(c=>c.id===i.category_id);
-    return c && c.slug===cat;
-  });
+function filterMenu(categorySlug, button){
+  document.querySelectorAll('.fb').forEach(filterButton => filterButton.classList.remove('on'));
+  if(button) button.classList.add('on');
+
+  const filtered = categorySlug === 'all'
+    ? allItems
+    : allItems.filter(item => item.category_slug === categorySlug);
+
   renderMenuItems(filtered);
 }
 
-/* ── API: SETTINGS ───────────────────────── */
 async function loadSettings(){
   try {
     const res = await fetch('/api/settings');
-    if (!res.ok) throw new Error('Could not load settings');
+    if(!res.ok) throw new Error('Could not load settings');
+
     const payload = await res.json();
-    const settings = payload.data || {};
-    const wa = (settings.whatsapp || '').trim();
-    const catalogLink = (settings.whatsapp_catalog_url || '').trim() || (wa ? `https://wa.me/c/${wa}` : '');
-    const waLink = catalogLink || (wa ? `https://wa.me/${wa}` : '#');
-    const waElems = [document.getElementById('wa-link'), document.getElementById('wa-cta'), document.getElementById('wa-footer')];
-    waElems.forEach(el=>{ if(el){ el.href = waLink; el.target = '_blank'; }});
-    const ig = (settings.instagram || '').trim();
-    if (ig) {
-      [document.getElementById('ig-cta'), document.getElementById('ig-footer')]
-        .forEach(el=>{ if(el){ el.href = ig; el.target = '_blank'; }});
-    }
-  } catch(e){}
+    siteSettings = { ...siteSettings, ...(payload.data || {}) };
+  } catch (error) {
+    console.error('Settings load failed', error);
+  }
+
+  const wa = (siteSettings.whatsapp || '').trim();
+  const catalogLink = (siteSettings.whatsapp_catalog_url || '').trim() || (wa ? `https://wa.me/c/${wa}` : '');
+  const waLink = catalogLink || (wa ? `https://wa.me/${wa}` : '#');
+  [document.getElementById('wa-link'), document.getElementById('wa-cta'), document.getElementById('wa-footer')]
+    .forEach(element => { if(element){ element.href = waLink; element.target = '_blank'; } });
+
+  const ig = (siteSettings.instagram || '').trim();
+  if(ig){
+    [document.getElementById('ig-cta'), document.getElementById('ig-footer')]
+      .forEach(element => { if(element){ element.href = ig; element.target = '_blank'; } });
+  }
+
+  syncSiteSettings();
 }
 
-/* ── STATS COUNTER ───────────────────────── */
-new IntersectionObserver(es=>{
-  if(es[0].isIntersecting){ let n=0;const s=()=>{n=Math.min(n+1,30);document.getElementById('sn1').textContent=n+'+';if(n<30)requestAnimationFrame(s);};requestAnimationFrame(s); }
-},{threshold:.5}).observe(document.getElementById('sn1'));
+new IntersectionObserver(entries => {
+  if(entries[0].isIntersecting){
+    let current = 0;
+    const target = Math.max(allItems.length, 30);
+    const step = () => {
+      current = Math.min(current + 1, target);
+      document.getElementById('sn1').textContent = `${current}+`;
+      if(current < target) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+},{ threshold:.5 }).observe(document.getElementById('sn1'));
 
-/* ── TOAST ───────────────────────────────── */
 function toast(msg){
-  const existing=document.querySelector('.toast-pop');if(existing)existing.remove();
-  const t=document.createElement('div');t.className='toast-pop';t.textContent=msg;
-  document.body.appendChild(t);setTimeout(()=>t.remove(),3000);
+  const existing = document.querySelector('.toast-pop');
+  if(existing) existing.remove();
+  const toastEl = document.createElement('div');
+  toastEl.className = 'toast-pop';
+  toastEl.textContent = msg;
+  document.body.appendChild(toastEl);
+  setTimeout(() => toastEl.remove(), 3000);
 }
 
-/* ── FILTER MENU ─────────────────────────── */
-// filterMenu already defined above
+document.addEventListener('DOMContentLoaded', () => setTimeout(hideLoader, 1800));
+window.addEventListener('load', () => setTimeout(hideLoader, 600));
+window.setTimeout(hideLoader, 4000);
 
-/* ── LOADER ──────────────────────────────── */
-document.addEventListener('DOMContentLoaded',()=>setTimeout(hideLoader,1800));
-window.addEventListener('load',()=>setTimeout(hideLoader,600));
-window.setTimeout(hideLoader,4000);
-
-/* ── INIT ────────────────────────────────── */
-Promise.allSettled([loadMenu(), loadSettings()]).finally(()=>setTimeout(hideLoader,150));
+syncSiteSettings();
+updateCartUI();
+Promise.allSettled([loadMenu(), loadSettings()]).finally(() => setTimeout(hideLoader, 150));
 </script>
 </body>
 </html>
