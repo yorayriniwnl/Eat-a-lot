@@ -57,13 +57,6 @@ db.exec(`
     updated_at  TEXT DEFAULT (datetime('now'))
   );
 
-  CREATE TABLE IF NOT EXISTS admins (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    username   TEXT NOT NULL UNIQUE,
-    password   TEXT NOT NULL,
-    created_at TEXT DEFAULT (datetime('now'))
-  );
-
   CREATE TABLE IF NOT EXISTS site_settings (
     key   TEXT PRIMARY KEY,
     value TEXT
