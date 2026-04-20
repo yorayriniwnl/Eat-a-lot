@@ -1,12 +1,20 @@
 const Database = require('better-sqlite3');
+const os = require('os');
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, 'eat_a_lot.db');
+const IS_VERCEL = Boolean(process.env.VERCEL);
+const DB_PATH = IS_VERCEL
+  ? path.join(os.tmpdir(), 'eat_a_lot.db')
+  : path.join(__dirname, 'eat_a_lot.db');
 const db = new Database(DB_PATH);
 
-// Enable WAL mode for better performance
-db.pragma('journal_mode = WAL');
+// Vercel Functions can't persist bundled SQLite files, so use ephemeral temp storage there.
+db.pragma(`journal_mode = ${IS_VERCEL ? 'MEMORY' : 'WAL'}`);
 db.pragma('foreign_keys = ON');
+
+if (IS_VERCEL) {
+  console.warn(`[db] Using ephemeral SQLite storage at ${DB_PATH}. Data will reset across cold starts and instances.`);
+}
 
 // ─── SCHEMA ───────────────────────────────────────────────
 db.exec(`

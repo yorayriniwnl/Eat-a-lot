@@ -156,6 +156,11 @@ eat-a-lot/
 3. Set environment variables
 4. Deploy — it runs `npm start`
 
+### Vercel
+- The app now uses a writable temp SQLite path on Vercel so Functions do not crash on startup.
+- This storage is ephemeral, so orders, admin edits, and other database writes do not persist reliably across cold starts or multiple instances.
+- For production persistence on Vercel, move the database to a networked store such as Postgres.
+
 ### VPS (Ubuntu)
 ```bash
 npm install -g pm2
