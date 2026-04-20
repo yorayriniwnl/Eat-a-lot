@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eat A Lot — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--void:#070402;--panel:#0D0803;--card:#130B04;--border:rgba(255,179,0,.1);--ember:#FF3A00;--gold:#FFB300;--pale:#FFF0D6;--green:#22C55E;--red:#EF4444;--blue:#3B82F6}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--void);color:var(--pale);font-family:'Syne',sans-serif;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+#login-screen{position:fixed;inset:0;background:var(--void);z-index:1000;display:flex;align-items:center;justify-content:center}
+.login-box{background:var(--panel);border:1px solid var(--border);border-radius:24px;padding:3rem;width:380px;text-align:center}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:4px;background:linear-gradient(135deg,var(--gold),var(--ember));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
+.login-sub{font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,240,214,.3);margin-bottom:2.5rem}
+.input{width:100%;padding:.9rem 1.2rem;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;color:var(--pale);font-family:'Syne',sans-serif;font-size:.9rem;outline:none;transition:border-color .3s;margin-bottom:.8rem}
+.input::placeholder{color:rgba(255,240,214,.25)}
+.input:focus{border-color:rgba(255,179,0,.4)}
+.btn{padding:.9rem 2rem;border-radius:100px;border:none;font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .3s}
+.btn-primary{background:linear-gradient(135deg,var(--ember),#FF6B00);color:#fff;box-shadow:0 4px 20px rgba(255,58,0,.3)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,58,0,.5)}
+.btn-primary:disabled{opacity:.5;transform:none}
+.btn-danger{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3)}
+.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-success{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3)}
+.btn-success:hover{background:rgba(34,197,94,.25)}
+.btn-ghost{background:rgba(255,179,0,.08);color:var(--gold);border:1px solid rgba(255,179,0,.2)}
+.btn-ghost:hover{background:rgba(255,179,0,.15)}
+.btn-sm{padding:.45rem 1rem;font-size:.75rem}
+.err{color:var(--red);font-size:.8rem;margin-top:.5rem}
+/* LAYOUT */
+#app{display:none;height:100vh}
+#app.visible{display:flex}
+aside{width:240px;min-width:240px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:2rem 0}
+.sidebar-logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:3px;background:linear-gradient(135deg,var(--gold),var(--ember));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:0 1.5rem;margin-bottom:.3rem}
+.sidebar-sub{font-size:.6rem;letter-spacing:3px;color:rgba(255,240,214,.2);text-transform:uppercase;padding:0 1.5rem;margin-bottom:2.5rem}
+nav a{display:flex;align-items:center;gap:1rem;padding:.85rem 1.5rem;color:rgba(255,240,214,.4);font-size:.85rem;letter-spacing:.5px;transition:all .3s;border-left:2px solid transparent;margin-bottom:.2rem}
+nav a:hover{color:var(--pale);background:rgba(255,255,255,.03);border-left-color:rgba(255,179,0,.3)}
+nav a.active{color:var(--gold);background:rgba(255,179,0,.06);border-left-color:var(--gold)}
+.nav-icon{font-size:1.1rem;min-width:1.2rem;text-align:center}
+.sidebar-footer{margin-top:auto;padding:1.5rem}
+.admin-info{font-size:.75rem;color:rgba(255,240,214,.25);margin-bottom:1rem}
+main{flex:1;overflow-y:auto;padding:2.5rem 3rem;background:var(--void)}
+main::-webkit-scrollbar{width:4px}
+main::-webkit-scrollbar-track{background:transparent}
+main::-webkit-scrollbar-thumb{background:rgba(255,179,0,.15);border-radius:2px}
+.page{display:none}
+.page.active{display:block}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:3px;background:linear-gradient(135deg,var(--pale),rgba(255,240,214,.6));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:2rem}
+/* STAT CARDS */
+.stat-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-bottom:2.5rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;background:radial-gradient(circle,var(--c,.3) 0%,transparent 70%);opacity:.4}
+.sc-label{font-size:.65rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,240,214,.35);margin-bottom:.5rem}
+.sc-val{font-family:'Bebas Neue',sans-serif;font-size:2.5rem;letter-spacing:2px;line-height:1;background:linear-gradient(135deg,var(--gold),var(--ember));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sc-sub{font-size:.72rem;color:rgba(255,240,214,.3);margin-top:.3rem}
+/* TABLE */
+.table-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.table-header{padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.table-title{font-size:.85rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,240,214,.5)}
+table{width:100%;border-collapse:collapse}
+th{padding:.9rem 1.2rem;text-align:left;font-size:.65rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,240,214,.3);border-bottom:1px solid var(--border)}
+td{padding:1rem 1.2rem;font-size:.85rem;border-bottom:1px solid rgba(255,179,0,.04);transition:background .2s}
+tr:hover td{background:rgba(255,255,255,.02)}
+tr:last-child td{border-bottom:none}
+.menu-cell{display:flex;align-items:center;gap:.9rem}
+.menu-thumb{width:54px;height:54px;min-width:54px;border-radius:16px;overflow:hidden;border:1px solid rgba(255,179,0,.14);background:linear-gradient(180deg,rgba(18,8,0,.95),rgba(8,3,0,.98));box-shadow:0 12px 28px rgba(255,58,0,.12)}
+.menu-thumb img{width:100%;height:100%;display:block;object-fit:cover}
+.menu-thumb-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.35rem}
+.menu-name{font-weight:600;color:var(--pale)}
+.menu-sub{font-size:.72rem;color:rgba(255,240,214,.35);margin-top:.2rem}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .7rem;border-radius:100px;font-size:.65rem;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.badge-pending{background:rgba(251,191,36,.12);color:#FBBf24;border:1px solid rgba(251,191,36,.25)}
+.badge-confirmed{background:rgba(59,130,246,.12);color:var(--blue);border:1px solid rgba(59,130,246,.25)}
+.badge-preparing{background:rgba(249,115,22,.12);color:#F97316;border:1px solid rgba(249,115,22,.25)}
+.badge-ready{background:rgba(139,92,246,.12);color:#8B5CF6;border:1px solid rgba(139,92,246,.25)}
+.badge-delivered{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.badge-cancelled{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.badge-veg{background:rgba(34,197,94,.12);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.badge-nonveg{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25)}
+.badge-avail{background:rgba(34,197,94,.12);color:var(--green)}
+.badge-unavail{background:rgba(239,68,68,.12);color:var(--red)}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-bg.open{display:flex}
+.modal{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:2rem;width:500px;max-height:85vh;overflow-y:auto}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;letter-spacing:2px;background:linear-gradient(135deg,var(--gold),var(--ember));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:1.5rem}
+.form-group{margin-bottom:1rem}
+.form-label{font-size:.7rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,240,214,.4);margin-bottom:.4rem;display:block}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+select.input option{background:var(--panel);color:var(--pale)}
+.toggle-wrap{display:flex;align-items:center;gap:.8rem}
+.toggle{width:40px;height:22px;border-radius:11px;background:rgba(255,255,255,.1);border:1px solid var(--border);cursor:pointer;position:relative;transition:background .3s}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;top:2px;left:2px;transition:left .3s;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.toggle.on::after{left:20px}
+/* STATUS SELECT */
+.status-sel{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--pale);font-family:'Syne',sans-serif;font-size:.8rem;padding:.35rem .6rem;border-radius:8px;cursor:pointer;outline:none}
+.status-sel option{background:var(--panel)}
+/* SEARCH */
+.search-bar{display:flex;gap:1rem;margin-bottom:1.5rem;align-items:center}
+.search-input{flex:1;padding:.7rem 1rem;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--pale);font-family:'Syne',sans-serif;font-size:.85rem;outline:none}
+.search-input:focus{border-color:rgba(255,179,0,.3)}
+/* TOAST */
+.adm-toast{position:fixed;bottom:2rem;right:2rem;z-index:900;background:rgba(8,4,0,.95);border:1px solid rgba(255,179,0,.25);padding:.9rem 1.8rem;border-radius:100px;font-size:.85rem;color:var(--gold);backdrop-filter:blur(20px);animation:tin .3s ease}
+@keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.empty-state{text-align:center;padding:4rem;color:rgba(255,240,214,.2);font-size:.9rem}
+.empty-icon{font-size:3rem;margin-bottom:1rem}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">EAT A LOT</div>
+    <div class="login-sub">Admin Panel</div>
+    <input class="input" type="text" id="un" placeholder="Username" onkeydown="if(event.key==='Enter')login()">
+    <input class="input" type="password" id="pw" placeholder="Password" onkeydown="if(event.key==='Enter')login()">
+    <div class="err" id="login-err"></div>
+    <button class="btn btn-primary" id="login-btn" onclick="login()" style="width:100%;margin-top:1rem">Sign In 🔥</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <aside>
+    <div class="sidebar-logo">EAT A LOT</div>
+    <div class="sidebar-sub">Admin Panel</div>
+    <nav>
+      <a href="#" class="active" onclick="showPage('dashboard',this)"><span class="nav-icon">📊</span>Dashboard</a>
+      <a href="#" onclick="showPage('orders',this)"><span class="nav-icon">📦</span>Orders</a>
+      <a href="#" onclick="showPage('menu',this)"><span class="nav-icon">🍜</span>Menu Items</a>
+      <a href="#" onclick="showPage('categories',this)"><span class="nav-icon">📁</span>Categories</a>
+      <a href="#" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span>Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-info" id="admin-name">Logged in as admin</div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <main>
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-title">Dashboard</div>
+      <div class="stat-cards">
+        <div class="stat-card" style="--c:rgba(255,179,0,0.4)"><div class="sc-label">Total Orders</div><div class="sc-val" id="d-total">—</div><div class="sc-sub">All time</div></div>
+        <div class="stat-card" style="--c:rgba(34,197,94,0.4)"><div class="sc-label">Today's Orders</div><div class="sc-val" id="d-today">—</div><div class="sc-sub">Since midnight</div></div>
+        <div class="stat-card" style="--c:rgba(255,58,0,0.4)"><div class="sc-label">Total Revenue</div><div class="sc-val" id="d-rev">—</div><div class="sc-sub">Excl. cancelled</div></div>
+        <div class="stat-card" style="--c:rgba(59,130,246,0.4)"><div class="sc-label">Pending</div><div class="sc-val" id="d-pend">—</div><div class="sc-sub">Awaiting action</div></div>
+      </div>
+      <div class="table-wrap">
+        <div class="table-header"><div class="table-title">Recent Orders</div><button class="btn btn-ghost btn-sm" onclick="showPage('orders',document.querySelector('nav a:nth-child(2)'))">View All</button></div>
+        <table><thead><tr><th>Ref</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody id="dash-orders"></tbody></table>
+      </div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="page" id="page-orders">
+      <div class="page-title">Orders</div>
+      <div class="search-bar">
+        <input class="search-input" id="order-search" placeholder="Search by ref or customer..." oninput="searchOrders()">
+        <select class="input" style="width:160px;margin-bottom:0" id="order-status-filter" onchange="loadOrders()">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="preparing">Preparing</option>
+          <option value="ready">Ready</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Ref</th><th>Customer</th><th>Phone</th><th>Items</th><th>Total</th><th>Status</th><th>Time</th></tr></thead>
+        <tbody id="orders-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- MENU -->
+    <div class="page" id="page-menu">
+      <div class="page-title">Menu Items</div>
+      <div class="search-bar">
+        <input class="search-input" id="menu-search" placeholder="Search items..." oninput="renderMenuTable()">
+        <select class="input" style="width:180px;margin-bottom:0" id="menu-cat-filter" onchange="renderMenuTable()">
+          <option value="">All Categories</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="openItemModal()">+ Add Item</button>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Item</th><th>Category</th><th>Price</th><th>Type</th><th>Available</th><th>Actions</th></tr></thead>
+        <tbody id="menu-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="page" id="page-categories">
+      <div class="page-title">Categories</div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1.5rem">
+        <button class="btn btn-primary btn-sm" onclick="openCatModal()">+ Add Category</button>
+      </div>
+      <div class="table-wrap">
+        <table><thead><tr><th>Emoji</th><th>Name</th><th>Slug</th><th>Items</th><th>Active</th><th>Actions</th></tr></thead>
+        <tbody id="cats-body"></tbody></table>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-title">Settings</div>
+      <div style="max-width:600px">
+        <div class="table-wrap" style="padding:2rem">
+          <div class="form-group"><label class="form-label">Restaurant Name</label><input class="input" id="s-name" placeholder="Eat A Lot"></div>
+          <div class="form-group"><label class="form-label">Tagline</label><input class="input" id="s-tagline" placeholder="Born to be Devoured"></div>
+          <div class="form-group"><label class="form-label">WhatsApp Number (with country code, no +)</label><input class="input" id="s-wa" placeholder="919XXXXXXXXX"></div>
+          <div class="form-group"><label class="form-label">Instagram URL</label><input class="input" id="s-ig" placeholder="https://instagram.com/..."></div>
+          <div class="form-group"><label class="form-label">Address</label><input class="input" id="s-addr" placeholder="Patna, Bihar"></div>
+          <div class="form-group"><label class="form-label">Open Hours Text</label><input class="input" id="s-hours" placeholder="Open 24 Hours"></div>
+          <div class="form-group">
+            <label class="form-label">Restaurant Status</label>
+            <div class="toggle-wrap">
+              <div class="toggle on" id="s-open-toggle" onclick="this.classList.toggle('on')"></div>
+              <span style="font-size:.85rem;color:rgba(255,240,214,.5)">Open for orders</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:1rem">Save Settings</button>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ITEM MODAL -->
+<div class="modal-bg" id="item-modal">
+  <div class="modal">
+    <div class="modal-title" id="item-modal-title">Add Menu Item</div>
+    <input type="hidden" id="item-id">
+    <div class="form-group"><label class="form-label">Category</label>
+      <select class="input" id="item-cat"></select></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Name</label><input class="input" id="item-name" placeholder="Pahadi Maggie"></div>
+      <div class="form-group"><label class="form-label">Emoji</label><input class="input" id="item-emoji" placeholder="🍜" maxlength="4"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Description</label><input class="input" id="item-desc" placeholder="Short description..."></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Price (₹)</label><input class="input" type="number" id="item-price" placeholder="79"></div>
+      <div class="form-group"><label class="form-label">Sort Order</label><input class="input" type="number" id="item-sort" placeholder="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Type</label>
+        <select class="input" id="item-veg"><option value="1">Vegetarian</option><option value="0">Non-Vegetarian</option></select></div>
+      <div class="form-group"><label class="form-label">Featured?</label>
+        <select class="input" id="item-feat"><option value="0">No</option><option value="1">Yes</option></select></div>
+    </div>
+    <div style="display:flex;gap:1rem;margin-top:1.5rem">
+      <button class="btn btn-primary" onclick="saveItem()" style="flex:1">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal('item-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORY MODAL -->
+<div class="modal-bg" id="cat-modal">
+  <div class="modal">
+    <div class="modal-title">Add Category</div>
+    <div class="form-group"><label class="form-label">Name</label><input class="input" id="cat-name" placeholder="Burgers"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Emoji</label><input class="input" id="cat-emoji" placeholder="🍔"></div>
+      <div class="form-group"><label class="form-label">Slug</label><input class="input" id="cat-slug" placeholder="burgers"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Sort Order</label><input class="input" type="number" id="cat-sort" placeholder="0"></div>
+    <div style="display:flex;gap:1rem;margin-top:1.5rem">
+      <button class="btn btn-primary" onclick="saveCat()" style="flex:1">Save</button>
+      <button class="btn btn-ghost" onclick="closeModal('cat-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="/assets/catalog/menu-image-map.js"></script>
+<script>
+let TOKEN = localStorage.getItem('eal_token') || '';
+let allMenuItems = [], allCategories = [], allOrders = [];
+const VISUALS = window.EAT_A_LOT_VISUALS || { items: {} };
+
+function escapeHtml(value = ''){
+  return String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  }[char]));
+}
+
+function getItemImage(name){
+  return VISUALS.items?.[name] || '';
+}
+
+/* ── AUTH ─────────────────────────── */
+async function login(){
+  const btn = document.getElementById('login-btn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  const err = document.getElementById('login-err');
+  err.textContent = '';
+  try {
+    const res = await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.getElementById('un').value,password:document.getElementById('pw').value})});
+    const data = await res.json();
+    if(data.token){
+      TOKEN = data.token; localStorage.setItem('eal_token',TOKEN);
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').classList.add('visible');
+      document.getElementById('admin-name').textContent = 'Logged in as '+(data.admin?.username||'admin');
+      await init();
+    } else { err.textContent = data.error || 'Login failed'; }
+  } catch(e){ err.textContent = 'Server error'; }
+  btn.disabled = false; btn.textContent = 'Sign In 🔥';
+}
+
+function logout(){ localStorage.removeItem('eal_token'); location.reload(); }
+
+function showLogin(message = ''){
+  TOKEN = '';
+  localStorage.removeItem('eal_token');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-err').textContent = message;
+}
+
+function handleAdminError(error, fallbackMessage){
+  if(error?.status === 401){
+    showLogin('Session expired. Please sign in again.');
+    return;
+  }
+  console.error(error);
+  toast(error?.message || fallbackMessage);
+}
+
+async function api(path, opts={}){
+  const res = await fetch('/api'+path,{...opts,headers:{...(opts.headers||{}),'Authorization':'Bearer '+TOKEN,'Content-Type':'application/json'}});
+  const data = await res.json().catch(() => ({}));
+  if(!res.ok){
+    const error = new Error(data.error || 'Request failed');
+    error.status = res.status;
+    throw error;
+  }
+  return data;
+}
+
+/* ── NAVIGATION ───────────────────── */
+function showPage(id, link){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(link) link.classList.add('active');
+  if(id==='dashboard') loadDashboard().catch(error => handleAdminError(error, 'Could not load dashboard'));
+  if(id==='orders') loadOrders().catch(error => handleAdminError(error, 'Could not load orders'));
+  if(id==='menu') loadMenuAdmin().catch(error => handleAdminError(error, 'Could not load menu items'));
+  if(id==='categories') loadCategories().catch(error => handleAdminError(error, 'Could not load categories'));
+  if(id==='settings') loadSettings().catch(error => handleAdminError(error, 'Could not load settings'));
+}
+
+/* ── DASHBOARD ────────────────────── */
+async function loadDashboard(){
+  const data = await api('/orders/stats/summary');
+  const s = data.data;
+  document.getElementById('d-total').textContent = s.total_orders;
+  document.getElementById('d-today').textContent = s.today_orders;
+  document.getElementById('d-rev').textContent = '₹'+Math.round(s.total_revenue);
+  document.getElementById('d-pend').textContent = s.pending;
+  const orders = await api('/orders?limit=10');
+  const tbody = document.getElementById('dash-orders');
+  if(!orders.data?.length){ tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No orders yet</td></tr>'; return; }
+  tbody.innerHTML = orders.data.map(o=>`
+    <tr>
+      <td><code style="font-size:.75rem;color:var(--gold)">${o.order_ref}</code></td>
+      <td>${o.customer_name||'Guest'}</td>
+      <td>${JSON.parse(o.items_json).length} items</td>
+      <td style="font-weight:700">₹${Math.round(o.total)}</td>
+      <td><span class="badge badge-${o.status}">${o.status}</span></td>
+      <td style="color:rgba(255,240,214,.4);font-size:.78rem">${new Date(o.created_at).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
+    </tr>
+  `).join('');
+}
+
+/* ── ORDERS ───────────────────────── */
+async function loadOrders(){
+  const status = document.getElementById('order-status-filter')?.value || '';
+  const data = await api('/orders?limit=100'+(status?'&status='+status:''));
+  allOrders = data.data || [];
+  renderOrdersTable();
+}
+function searchOrders(){ renderOrdersTable(); }
+function renderOrdersTable(){
+  const q = document.getElementById('order-search')?.value.toLowerCase() || '';
+  const tbody = document.getElementById('orders-body');
+  const filtered = allOrders.filter(o=>(o.order_ref+o.customer_name+o.customer_phone).toLowerCase().includes(q));
+  if(!filtered.length){ tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="empty-icon">📦</div>No orders found</div></td></tr>'; return; }
+  tbody.innerHTML = filtered.map(o=>`
+    <tr>
+      <td><code style="font-size:.75rem;color:var(--gold)">${o.order_ref}</code></td>
+      <td>${o.customer_name||'Guest'}</td>
+      <td>${o.customer_phone||'—'}</td>
+      <td style="font-size:.75rem">${JSON.parse(o.items_json).map(i=>`${i.emoji} ${i.name} x${i.qty}`).join(', ')}</td>
+      <td style="font-weight:700">₹${Math.round(o.total)}</td>
+      <td>
+        <select class="status-sel" onchange="updateOrderStatus('${o.order_ref}',this.value)">
+          ${['pending','confirmed','preparing','ready','delivered','cancelled'].map(s=>`<option value="${s}" ${o.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </td>
+      <td style="color:rgba(255,240,214,.4);font-size:.75rem">${new Date(o.created_at).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</td>
+    </tr>
+  `).join('');
+}
+async function updateOrderStatus(ref, status){
+  await api('/orders/'+ref+'/status',{method:'PATCH',body:JSON.stringify({status})});
+  toast('Order '+ref+' → '+status);
+}
+
+/* ── MENU ─────────────────────────── */
+async function loadMenuAdmin(){
+  const [menuData, catData] = await Promise.all([api('/menu'), api('/admin/categories')]);
+  allCategories = catData.data || [];
+  allMenuItems = menuData.data?.flatMap(c=>c.items.map(i=>({
+    ...i,
+    cat_name:c.name,
+    cat_emoji:c.emoji,
+    image:getItemImage(i.name),
+  }))) || [];
+  // Populate cat filter
+  const sel = document.getElementById('menu-cat-filter');
+  sel.innerHTML = '<option value="">All Categories</option>' + allCategories.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  // Item modal cats
+  document.getElementById('item-cat').innerHTML = allCategories.map(c=>`<option value="${c.id}">${c.emoji} ${c.name}</option>`).join('');
+  renderMenuTable();
+}
+function renderMenuTable(){
+  const q = document.getElementById('menu-search')?.value.toLowerCase() || '';
+  const catFilter = document.getElementById('menu-cat-filter')?.value || '';
+  const filtered = allMenuItems.filter(i=>{
+    const matchQ = i.name.toLowerCase().includes(q);
+    const matchC = !catFilter || i.category_id == catFilter;
+    return matchQ && matchC;
+  });
+  const tbody = document.getElementById('menu-body');
+  if(!filtered.length){ tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🍴</div>No items found</div></td></tr>'; return; }
+  tbody.innerHTML = filtered.map(i=>`
+    <tr>
+      <td>
+        <div class="menu-cell">
+          <div class="menu-thumb">
+            ${i.image
+              ? `<img src="${i.image}" alt="${escapeHtml(i.name)}" loading="lazy" decoding="async">`
+              : `<div class="menu-thumb-fallback">${escapeHtml(i.emoji)}</div>`}
+          </div>
+          <div>
+            <div class="menu-name">${escapeHtml(i.name)}</div>
+            <div class="menu-sub">${escapeHtml(i.emoji)} visual synced to catalog</div>
+          </div>
+        </div>
+      </td>
+      <td>${escapeHtml(i.cat_emoji)} ${escapeHtml(i.cat_name)}</td>
+      <td style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--gold)">₹${i.price}</td>
+      <td><span class="badge ${i.is_veg?'badge-veg':'badge-nonveg'}">${i.is_veg?'VEG':'NON-VEG'}</span></td>
+      <td><span class="badge ${i.available?'badge-avail':'badge-unavail'}" style="cursor:pointer" onclick="toggleItem(${i.id})">${i.available?'✓ Available':'✗ Hidden'}</span></td>
+      <td style="display:flex;gap:.5rem">
+        <button class="btn btn-ghost btn-sm" onclick="openItemModal(${i.id})">Edit</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteItem(${i.id})">Del</button>
+      </td>
+    </tr>
+  `).join('');
+}
+function openItemModal(id){
+  document.getElementById('item-id').value = id || '';
+  document.getElementById('item-modal-title').textContent = id ? 'Edit Item' : 'Add Item';
+  if(id){
+    const item = allMenuItems.find(i=>i.id==id);
+    if(!item) return;
+    document.getElementById('item-cat').value = item.category_id;
+    document.getElementById('item-name').value = item.name;
+    document.getElementById('item-emoji').value = item.emoji;
+    document.getElementById('item-desc').value = item.description || '';
+    document.getElementById('item-price').value = item.price;
+    document.getElementById('item-sort').value = item.sort_order;
+    document.getElementById('item-veg').value = item.is_veg;
+    document.getElementById('item-feat').value = item.is_featured;
+  } else {
+    ['item-name','item-emoji','item-desc','item-price','item-sort'].forEach(id=>document.getElementById(id).value='');
+  }
+  document.getElementById('item-modal').classList.add('open');
+}
+async function saveItem(){
+  const id = document.getElementById('item-id').value;
+  const body = {
+    category_id: document.getElementById('item-cat').value,
+    name: document.getElementById('item-name').value,
+    emoji: document.getElementById('item-emoji').value || '🍴',
+    description: document.getElementById('item-desc').value,
+    price: parseFloat(document.getElementById('item-price').value),
+    sort_order: parseInt(document.getElementById('item-sort').value) || 0,
+    is_veg: parseInt(document.getElementById('item-veg').value),
+    is_featured: parseInt(document.getElementById('item-feat').value),
+  };
+  if(!body.name || !body.price) return toast('❌ Name and price required');
+  if(id){ await api('/menu/items/'+id,{method:'PUT',body:JSON.stringify(body)}); }
+  else { await api('/menu/items',{method:'POST',body:JSON.stringify(body)}); }
+  closeModal('item-modal'); loadMenuAdmin(); toast('✅ Item saved!');
+}
+async function deleteItem(id){
+  if(!confirm('Delete this item?')) return;
+  await api('/menu/items/'+id,{method:'DELETE'});
+  loadMenuAdmin(); toast('Item deleted');
+}
+async function toggleItem(id){
+  const res = await api('/menu/items/'+id+'/toggle',{method:'PATCH'});
+  loadMenuAdmin(); toast(res.available ? '✅ Item available' : '⚫ Item hidden');
+}
+
+/* ── CATEGORIES ───────────────────── */
+async function loadCategories(){
+  const data = await api('/admin/categories');
+  const cats = data.data || [];
+  const menuData = await api('/menu');
+  const countMap = {};
+  (menuData.data||[]).forEach(c=>countMap[c.id]=c.items?.length||0);
+  const tbody = document.getElementById('cats-body');
+  tbody.innerHTML = cats.map(c=>`
+    <tr>
+      <td style="font-size:1.5rem">${c.emoji}</td>
+      <td style="font-weight:600">${c.name}</td>
+      <td><code style="font-size:.75rem;color:rgba(255,240,214,.4)">${c.slug}</code></td>
+      <td>${countMap[c.id]||0} items</td>
+      <td><span class="badge ${c.active?'badge-avail':'badge-unavail'}">${c.active?'Active':'Hidden'}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="toggleCat(${c.id},${c.active?0:1})">${c.active?'Hide':'Show'}</button>
+      </td>
+    </tr>
+  `).join('');
+}
+function openCatModal(){ document.getElementById('cat-modal').classList.add('open'); }
+async function saveCat(){
+  const body = {name:document.getElementById('cat-name').value,emoji:document.getElementById('cat-emoji').value||'🍴',slug:document.getElementById('cat-slug').value,sort_order:parseInt(document.getElementById('cat-sort').value)||0};
+  if(!body.name||!body.slug) return toast('❌ Name and slug required');
+  await api('/admin/categories',{method:'POST',body:JSON.stringify(body)});
+  closeModal('cat-modal'); loadCategories(); toast('✅ Category added!');
+}
+async function toggleCat(id, active){
+  await api('/admin/categories/'+id,{method:'PUT',body:JSON.stringify({active})});
+  loadCategories(); toast(active?'✅ Category active':'⚫ Category hidden');
+}
+
+/* ── SETTINGS ─────────────────────── */
+async function loadSettings(){
+  const data = await api('/admin/settings');
+  const s = data.data;
+  document.getElementById('s-name').value = s.restaurant_name||'';
+  document.getElementById('s-tagline').value = s.tagline||'';
+  document.getElementById('s-wa').value = s.whatsapp||'';
+  document.getElementById('s-ig').value = s.instagram||'';
+  document.getElementById('s-addr').value = s.address||'';
+  document.getElementById('s-hours').value = s.open_hours||'';
+  const t = document.getElementById('s-open-toggle');
+  t.classList.toggle('on', s.is_open==='1');
+}
+async function saveSettings(){
+  const body = {
+    restaurant_name: document.getElementById('s-name').value,
+    tagline: document.getElementById('s-tagline').value,
+    whatsapp: document.getElementById('s-wa').value,
+    instagram: document.getElementById('s-ig').value,
+    address: document.getElementById('s-addr').value,
+    open_hours: document.getElementById('s-hours').value,
+    is_open: document.getElementById('s-open-toggle').classList.contains('on') ? '1' : '0',
+  };
+  await api('/admin/settings',{method:'PUT',body:JSON.stringify(body)});
+  toast('✅ Settings saved!');
+}
+
+/* ── HELPERS ──────────────────────── */
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+function toast(msg){ const t=document.createElement('div');t.className='adm-toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3000); }
+
+/* ── INIT ─────────────────────────── */
+async function init(){
+  try {
+    const me = await api('/admin/me');
+    if(!me.admin) throw new Error('Session expired. Please sign in again.');
+    document.getElementById('admin-name').textContent = 'Logged in as '+me.admin.username;
+    await loadDashboard();
+  } catch (error) {
+    handleAdminError(error, 'Could not load admin');
+    throw error;
+  }
+}
+
+// Auto-login if token exists
+if(TOKEN){
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  init().catch(() => {});
+}
+</script>
+</body>
+</html>
