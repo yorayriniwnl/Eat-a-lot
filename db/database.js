@@ -152,16 +152,39 @@ menuSeed.forEach(([slug, name, desc, price, emoji, isVeg, isFeat, sort]) => {
 });
 
 // ─── SEED SETTINGS ──────────────────────────────────────────
+const DEFAULT_WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '918144312236';
+const DEFAULT_WHATSAPP_CATALOG_URL = process.env.WHATSAPP_CATALOG_URL || `https://wa.me/c/${DEFAULT_WHATSAPP_NUMBER}`;
+const DEFAULT_INSTAGRAM_URL = process.env.INSTAGRAM_URL || 'https://www.instagram.com/eat_a_lot_08/';
+
 const setSetting = db.prepare('INSERT OR IGNORE INTO site_settings (key, value) VALUES (?, ?)');
 [
   ['restaurant_name', 'Eat A Lot'],
   ['tagline', 'Born to be Devoured'],
-  ['whatsapp', '919XXXXXXXXX'],
-  ['instagram', 'https://www.instagram.com/eat_a_lot_08/'],
+  ['whatsapp', DEFAULT_WHATSAPP_NUMBER],
+  ['whatsapp_catalog_url', DEFAULT_WHATSAPP_CATALOG_URL],
+  ['instagram', DEFAULT_INSTAGRAM_URL],
   ['is_open', '1'],
   ['open_hours', 'Open 24 Hours'],
   ['address', 'Patna, Bihar'],
 ].forEach(([k, v]) => setSetting.run(k, v));
+
+db.prepare(`
+  UPDATE site_settings
+  SET value = ?
+  WHERE key = 'whatsapp' AND (value IS NULL OR TRIM(value) = '' OR value = '919XXXXXXXXX')
+`).run(DEFAULT_WHATSAPP_NUMBER);
+
+db.prepare(`
+  UPDATE site_settings
+  SET value = ?
+  WHERE key = 'whatsapp_catalog_url' AND (value IS NULL OR TRIM(value) = '')
+`).run(DEFAULT_WHATSAPP_CATALOG_URL);
+
+db.prepare(`
+  UPDATE site_settings
+  SET value = ?
+  WHERE key = 'instagram' AND (value IS NULL OR TRIM(value) = '')
+`).run(DEFAULT_INSTAGRAM_URL);
 
 console.log('✅ Database initialised');
 

@@ -216,6 +216,7 @@ select.input option{background:var(--panel);color:var(--pale)}
           <div class="form-group"><label class="form-label">Restaurant Name</label><input class="input" id="s-name" placeholder="Eat A Lot"></div>
           <div class="form-group"><label class="form-label">Tagline</label><input class="input" id="s-tagline" placeholder="Born to be Devoured"></div>
           <div class="form-group"><label class="form-label">WhatsApp Number (with country code, no +)</label><input class="input" id="s-wa" placeholder="919XXXXXXXXX"></div>
+          <div class="form-group"><label class="form-label">WhatsApp Catalog URL</label><input class="input" id="s-wa-catalog" placeholder="https://wa.me/c/918144312236"></div>
           <div class="form-group"><label class="form-label">Instagram URL</label><input class="input" id="s-ig" placeholder="https://instagram.com/..."></div>
           <div class="form-group"><label class="form-label">Address</label><input class="input" id="s-addr" placeholder="Patna, Bihar"></div>
           <div class="form-group"><label class="form-label">Open Hours Text</label><input class="input" id="s-hours" placeholder="Open 24 Hours"></div>
@@ -558,6 +559,7 @@ async function loadSettings(){
   document.getElementById('s-name').value = s.restaurant_name||'';
   document.getElementById('s-tagline').value = s.tagline||'';
   document.getElementById('s-wa').value = s.whatsapp||'';
+  document.getElementById('s-wa-catalog').value = s.whatsapp_catalog_url||'';
   document.getElementById('s-ig').value = s.instagram||'';
   document.getElementById('s-addr').value = s.address||'';
   document.getElementById('s-hours').value = s.open_hours||'';
@@ -569,6 +571,7 @@ async function saveSettings(){
     restaurant_name: document.getElementById('s-name').value,
     tagline: document.getElementById('s-tagline').value,
     whatsapp: document.getElementById('s-wa').value,
+    whatsapp_catalog_url: document.getElementById('s-wa-catalog').value,
     instagram: document.getElementById('s-ig').value,
     address: document.getElementById('s-addr').value,
     open_hours: document.getElementById('s-hours').value,

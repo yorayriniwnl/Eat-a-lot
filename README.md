@@ -14,7 +14,7 @@ npm install
 ### 2. Configure environment
 ```bash
 cp .env.example .env
-# Edit .env with your WhatsApp number and secrets
+# Edit .env with your WhatsApp number, catalog link, and secrets
 ```
 
 ### 3. Run the server
@@ -142,6 +142,7 @@ eat-a-lot/
 | `JWT_SECRET` | Secret for JWT signing | `dev_secret` |
 | `ADMIN_USERNAME` | Admin login username | `admin` |
 | `ADMIN_PASSWORD` | Admin login password | `admin` |
+| `WHATSAPP_CATALOG_URL` | WhatsApp catalog URL | `https://wa.me/c/<WHATSAPP_NUMBER>` |
 | `WHATSAPP_NUMBER` | WA number (no +) | — |
 | `INSTAGRAM_URL` | Instagram profile URL | — |
 
