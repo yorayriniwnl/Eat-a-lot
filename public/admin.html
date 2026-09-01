@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Eat A Lot — Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>YOR // Eat A Lot admin</title>
 <style>
 :root{--void:#070402;--panel:#0D0803;--card:#130B04;--border:rgba(255,179,0,.1);--ember:#FF3A00;--gold:#FFB300;--pale:#FFF0D6;--green:#22C55E;--red:#EF4444;--blue:#3B82F6}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -108,6 +107,10 @@ select.input option{background:var(--panel);color:var(--pale)}
 @keyframes tin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .empty-state{text-align:center;padding:4rem;color:rgba(255,240,214,.2);font-size:.9rem}
 .empty-icon{font-size:3rem;margin-bottom:1rem}
+/* YOR // Visual Framework Lock */
+:root{--yor-void:#000000;--yor-graphite:#050505;--yor-crimson:#e84b4b;--yor-deep-crimson:#671515;--yor-signal:#ff8a7f;--yor-warm-white:#f5eaea;--yor-muted:#c4c4c4;--yor-field:linear-gradient(135deg,#671515,#8c1616,#2a0505);--void:var(--yor-void);--panel:var(--yor-graphite);--card:#1a0505;--border:rgba(245,234,234,.16);--ember:var(--yor-crimson);--gold:var(--yor-signal);--pale:var(--yor-warm-white);--green:var(--yor-signal);--red:var(--yor-crimson);--blue:var(--yor-signal)}
+*{cursor:auto!important}body{font-family:Arial,"Helvetica Neue",sans-serif;background-color:var(--yor-void);background-image:linear-gradient(rgba(232,75,75,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(232,75,75,.045) 1px,transparent 1px);background-size:32px 32px}button,a,.toggle{cursor:pointer!important}.btn,.btn-primary,.btn-danger,.btn-success,.btn-ghost{border-radius:0!important}.btn-primary{background:var(--yor-crimson)!important;color:#000!important}.btn-primary:hover,.btn-ghost:hover{background:var(--yor-signal)!important;color:#000!important}.btn-ghost{background:transparent!important;color:var(--yor-signal)!important;border-color:rgba(255,138,127,.34)!important}.btn-danger{background:rgba(232,75,75,.14)!important;color:var(--yor-signal)!important;border-color:rgba(232,75,75,.42)!important}.login-box,.stat-card,.table-wrap,.modal{border-radius:0!important;border-color:rgba(245,234,234,.18)!important;background:linear-gradient(145deg,rgba(5,5,5,.96),rgba(26,5,5,.72))!important}.sidebar-logo,.page-title,.sc-val,.modal-title{background:var(--yor-field)!important;-webkit-background-clip:text!important;background-clip:text!important}.input,.search-input,.status-sel{border-radius:0!important;background:var(--yor-graphite)!important;border-color:rgba(245,234,234,.24)!important;color:var(--yor-warm-white)!important}.input:focus,.search-input:focus,.status-sel:focus{outline:2px solid var(--yor-signal);outline-offset:2px}main,aside{background:rgba(0,0,0,.88)!important}.page-title,.login-logo,.sidebar-logo,.modal-title{color:var(--yor-warm-white)!important}.form-label,.sc-label,.sc-sub,.table-title,.menu-name{color:var(--yor-muted)!important}.badge{border-radius:0!important}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 </style>
 </head>
 <body>
@@ -302,7 +305,7 @@ function getItemImage(name){
 
 function applyAdminBrand(settings = {}){
   const brand = (settings.restaurant_name || 'Eat A Lot').trim();
-  document.title = `${brand} — Admin`;
+  document.title = `YOR // ${brand} // admin`;
   [document.getElementById('admin-login-logo'), document.getElementById('admin-sidebar-logo')]
     .forEach(element => { if(element) element.textContent = brand.toUpperCase(); });
 }
@@ -677,6 +680,106 @@ async function init(){
     throw error;
   }
 }
+
+// Keep legacy inline admin controls usable under restrictive global script
+// scopes while retaining the existing markup and keyboard affordances.
+document.addEventListener('click', event => {
+  const target = event.target.closest?.('[onclick]');
+  if(!target) return;
+
+  const action = target.getAttribute('onclick') || '';
+  const pageMatch = action.match(/^showPage\('([^']+)'/);
+  const itemMatch = action.match(/^openItemModal\((\d+)\)$/);
+  const categoryMatch = action.match(/^openCatModal\((\d+)\)$/);
+  const deleteMatch = action.match(/^deleteItem\((\d+)\)$/);
+  const toggleItemMatch = action.match(/^toggleItem\((\d+)\)$/);
+  const toggleCategoryMatch = action.match(/^toggleCat\((\d+),(\d+)\)$/);
+  const modalMatch = action.match(/^closeModal\('([^']+)'\)$/);
+
+  if(action === 'login()'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    login();
+  } else if(action === 'logout()'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    logout();
+  } else if(pageMatch){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    showPage(pageMatch[1], target);
+  } else if(action === 'openItemModal()'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openItemModal();
+  } else if(itemMatch){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openItemModal(Number(itemMatch[1]));
+  } else if(action === 'openCatModal()'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openCatModal();
+  } else if(categoryMatch){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openCatModal(Number(categoryMatch[1]));
+  } else if(action === 'saveItem()'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    saveItem();
+  } else if(action === 'saveCat()'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    saveCat();
+  } else if(action === 'saveSettings()'){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    saveSettings();
+  } else if(action === "this.classList.toggle('on')"){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    target.classList.toggle('on');
+  } else if(action === "closeModal('item-modal')" || action === "closeModal('cat-modal')"){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    closeModal(modalMatch[1]);
+  } else if(deleteMatch){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    deleteItem(Number(deleteMatch[1]));
+  } else if(toggleItemMatch){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    toggleItem(Number(toggleItemMatch[1]));
+  } else if(toggleCategoryMatch){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    toggleCat(Number(toggleCategoryMatch[1]), Number(toggleCategoryMatch[2]));
+  }
+}, true);
+
+document.addEventListener('keydown', event => {
+  if(event.key === 'Enter' && (event.target.id === 'un' || event.target.id === 'pw')){
+    event.preventDefault();
+    login();
+  }
+}, true);
+
+document.addEventListener('input', event => {
+  if(event.target.id === 'order-search') searchOrders();
+  if(event.target.id === 'menu-search') renderMenuTable();
+}, true);
+
+document.addEventListener('change', event => {
+  if(event.target.id === 'order-status-filter') loadOrders();
+  if(event.target.id === 'menu-cat-filter') renderMenuTable();
+  if(event.target.matches?.('.status-sel')){
+    const action = event.target.getAttribute('onchange') || '';
+    const match = action.match(/^updateOrderStatus\('([^']+)'/);
+    if(match) updateOrderStatus(match[1], event.target.value);
+  }
+}, true);
 
 // Auto-login if token exists
 bootstrapAdminBrand();

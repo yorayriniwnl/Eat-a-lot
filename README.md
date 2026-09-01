@@ -1,4 +1,20 @@
-# Eat A Lot
+# YOR // Eat A Lot
+
+> Full-stack food ordering storefront with a public menu, cart, WhatsApp checkout, and admin control surface.
+
+| Surface / claim | State | Boundary |
+|---|---|---|
+| Public menu, cart, settings, and order submission | VERIFIED | Express routes and seeded SQLite are wired locally. |
+| Admin panel and JWT auth | DEMO | Local control surface; default credentials must be replaced before deployment. |
+| Seeded catalog and food imagery | REPORTED | Repository assets and database seed are the source of truth. |
+| WhatsApp and Instagram handoff | EXPERIMENTAL | External destinations depend on configured environment values. |
+| Vercel serverless entrypoint | UNVERIFIED | Hosted health and ephemeral SQLite behavior require deployment verification. |
+| Durable production storage and operations | PLANNED | Move off temporary SQLite and complete security/observability hardening. |
+
+The storefront and admin panel follow the YOR visual contract: `#000000` void,
+`#050505` graphite, `#e84b4b` crimson, `#671515` deep crimson, `#ff8a7f` signal,
+`#f5eaea` warm white, `#c4c4c4` muted text, and the
+`#671515 → #8c1616 → #2a0505` field gradient. Run `npm run design:check` to guard both pages.
 
 Eat A Lot is a full-stack food ordering site with a public storefront, a JWT-protected admin panel, WhatsApp checkout, and a seeded SQLite catalog.
 

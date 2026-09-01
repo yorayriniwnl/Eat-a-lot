@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EAT A LOT — Born to be Devoured</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,700;1,300;1,700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<title>YOR // Eat A Lot storefront</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
 :root{--void:#050200;--ember:#FF3A00;--lava:#FF6B00;--gold:#FFB300;--pale:#FFF0D6;--smoke:rgba(255,255,255,.04);--glass:rgba(255,255,255,.06)}
@@ -251,6 +250,10 @@ footer{position:relative;z-index:2;border-top:1px solid rgba(255,179,0,.07);padd
   footer{flex-direction:column;gap:2rem;text-align:center;padding:3rem 2rem}
   #cart-drawer{width:100%;right:-100%}
 }
+/* YOR // Visual Framework Lock */
+:root{--yor-void:#000000;--yor-graphite:#050505;--yor-crimson:#e84b4b;--yor-deep-crimson:#671515;--yor-signal:#ff8a7f;--yor-warm-white:#f5eaea;--yor-muted:#c4c4c4;--yor-field:linear-gradient(135deg,#671515,#8c1616,#2a0505);--void:var(--yor-void);--ember:var(--yor-crimson);--lava:var(--yor-signal);--gold:var(--yor-signal);--pale:var(--yor-warm-white);--smoke:rgba(245,234,234,.05);--glass:rgba(5,5,5,.78)}
+*{cursor:auto!important}body{font-family:Arial,"Helvetica Neue",sans-serif;background-color:var(--yor-void);background-image:linear-gradient(rgba(232,75,75,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(232,75,75,.045) 1px,transparent 1px);background-size:32px 32px;color:var(--yor-warm-white)}a,button{cursor:pointer!important}.nbtn,.btn-fire,.btn-outline,.fb,.mc-add,.btn-wa,.btn-ig,.cart-close{border-radius:0!important}.nbtn,.btn-fire,.mc-add,.btn-wa,.btn-ig{background:var(--yor-crimson)!important;color:#000!important;box-shadow:0 16px 40px rgba(103,21,21,.24)!important}.nbtn:hover,.btn-fire:hover,.mc-add:hover,.btn-wa:hover,.btn-ig:hover{background:var(--yor-signal)!important}.btn-outline,.fb{border-color:rgba(255,138,127,.34)!important;color:var(--yor-signal)!important;background:transparent!important}.btn-outline:hover,.fb:hover,.fb.on{border-color:var(--yor-signal)!important;background:rgba(103,21,21,.42)!important;color:var(--yor-warm-white)!important}.h-tag .t2,.nl,.fl,.cart-title,.sec-h strong,.mc-price,.st-num,.hb-val{background:var(--yor-field)!important;-webkit-background-clip:text!important;background-clip:text!important}.hero-banner-card,.hero-thumb-card,.mc,.rv,.wf,.wv-card,.table-wrap,.tilt-card{border-radius:0!important;border-color:rgba(245,234,234,.18)!important}.hero-banner-card,.hero-thumb-card,.mc,.rv,.wf,.wv-card,.table-wrap{background:linear-gradient(145deg,rgba(5,5,5,.96),rgba(26,5,5,.72))!important}.marquee-wrap,.fire-div{background:var(--yor-field)!important}.h-pill,.status-chip,.hero-badge,.hero-badge2,.footer-meta span{border-radius:0!important;border-color:rgba(255,138,127,.3)!important;background:rgba(0,0,0,.38)!important;color:var(--yor-signal)!important}#loader,#cart-drawer{background:var(--yor-void)!important}#cur-dot{background:var(--yor-crimson)!important}.section-title,.sec-h,.hero-banner-title,.mc-name,.wf-t,.wvt,.rv-name{color:var(--yor-warm-white)!important}.h-sub,.hero-copy,.section-copy,.mc-desc,.wf-d,.wvd,.rv-txt,.fsub,.fcopy{color:var(--yor-muted)!important}input,select,textarea{border-radius:0!important;background:var(--yor-graphite)!important;border-color:rgba(245,234,234,.24)!important;color:var(--yor-warm-white)!important}input:focus,select:focus,textarea:focus{outline:2px solid var(--yor-signal);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important}}
 </style>
 </head>
 <body>
@@ -561,7 +564,7 @@ function syncSiteSettings(){
   const statusText = `${statusLabel} · ${address}`;
   const locationLabel = getLocationLabel(address);
 
-  document.title = `${brand} — ${tagline}`;
+  document.title = `YOR // ${brand} // storefront`;
   (document.getElementById('brand-loader') || document.querySelector('.ld-title')).textContent = brand.toUpperCase();
   (document.getElementById('brand-loader-tagline') || document.querySelector('.ld-sub')).textContent = tagline;
   document.querySelector('.nl').textContent = brand.toUpperCase();
@@ -904,9 +907,9 @@ function updateCartUI(){
           <div class="ci-price">₹${(item.price * item.qty).toFixed(0)}</div>
         </div>
         <div class="ci-controls">
-          <button class="ci-btn" onclick="changeQty(${item.id},-1)">−</button>
+          <button class="ci-btn" data-item-id="${item.id}" data-delta="-1" aria-label="Remove one ${escapeHtml(item.name)}">−</button>
           <span class="ci-qty">${item.qty}</span>
-          <button class="ci-btn" onclick="changeQty(${item.id},1)">+</button>
+          <button class="ci-btn" data-item-id="${item.id}" data-delta="1" aria-label="Add one ${escapeHtml(item.name)}">+</button>
         </div>
       </div>
     `).join('');
@@ -994,7 +997,7 @@ async function loadMenu(){
 
     const catGrid = document.getElementById('cat-grid');
     catGrid.innerHTML = allCategories.map(category => `
-      <div class="cat tilt-card reveal" onclick="focusCategory('${category.slug}')">
+      <div class="cat tilt-card reveal" data-category-slug="${escapeHtml(category.slug)}" onclick="focusCategory('${category.slug}')">
         <div class="card-shine"></div>
         <div class="cat-emoji-bg">
           ${category.coverImage
@@ -1054,7 +1057,7 @@ function renderMenuItems(items){
         <div class="mc-desc">${escapeHtml(item.description || '')}</div>
         <div class="mc-foot">
           <div class="mc-price">₹${item.price}</div>
-          <button class="mc-add" onclick="addToCart(${item.id},'${escapeJsString(item.name)}',${item.price},'${escapeJsString(item.emoji)}')">+</button>
+          <button class="mc-add" data-item-id="${item.id}" aria-label="Add ${escapeHtml(item.name)} to cart" onclick="addToCart(${item.id},'${escapeJsString(item.name)}',${item.price},'${escapeJsString(item.emoji)}')">+</button>
         </div>
       </div>
     </div>
@@ -1123,6 +1126,64 @@ function toast(msg){
   document.body.appendChild(toastEl);
   setTimeout(() => toastEl.remove(), 3000);
 }
+
+// Keep the existing inline HTML controls working even when the page is hosted
+// with a restrictive global script scope or inline-handler policy.
+document.addEventListener('click', event => {
+  const target = event.target.closest?.('button, .cat, #overlay');
+  if(!target) return;
+
+  if(target.matches('.mc-add')){
+    const item = allItems.find(candidate => String(candidate.id) === target.dataset.itemId);
+    if(item){
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      addToCart(item.id, item.name, item.price, item.emoji);
+    }
+    return;
+  }
+
+  if(target.matches('.ci-btn')){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    changeQty(Number(target.dataset.itemId), Number(target.dataset.delta));
+    return;
+  }
+
+  if(target.matches('.nbtn, .btn-outline')){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    openCart();
+    return;
+  }
+
+  if(target.matches('.cart-close, #overlay')){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    closeCart();
+    return;
+  }
+
+  if(target.matches('#checkout-btn')){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    placeOrder();
+    return;
+  }
+
+  if(target.matches('.fb')){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    filterMenu(target.dataset.cat || 'all', target);
+    return;
+  }
+
+  if(target.matches('.cat')){
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    focusCategory(target.dataset.categorySlug);
+  }
+}, true);
 
 document.addEventListener('DOMContentLoaded', () => setTimeout(hideLoader, 1800));
 window.addEventListener('load', () => setTimeout(hideLoader, 600));
