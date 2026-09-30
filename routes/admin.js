@@ -3,16 +3,28 @@ const jwt = require('jsonwebtoken');
 const db = require('../db/database');
 const auth = require('../middleware/auth');
 
+function adminAuthConfig() {
+  const production = process.env.NODE_ENV === 'production';
+  const username = process.env.ADMIN_USERNAME || (production ? '' : 'admin');
+  const password = process.env.ADMIN_PASSWORD || (production ? '' : 'admin');
+  const jwtSecret = process.env.JWT_SECRET || (production ? '' : 'dev_secret');
+
+  if (!username || !password || !jwtSecret) return null;
+  return { username, password, jwtSecret };
+}
+
 // POST /api/admin/login
 router.post('/login', (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) return res.status(400).json({ error: 'username and password required' });
 
-  const envUser = process.env.ADMIN_USERNAME || 'admin';
-  const envPass = process.env.ADMIN_PASSWORD || 'admin';
+  const config = adminAuthConfig();
+  if (!config) {
+    return res.status(503).json({ error: 'Admin authentication is not configured for this deployment.' });
+  }
 
-  if (username === envUser && password === envPass) {
-    const token = jwt.sign({ username, role: 'admin' }, process.env.JWT_SECRET || 'dev_secret', { expiresIn: '12h' });
+  if (username === config.username && password === config.password) {
+    const token = jwt.sign({ username, role: 'admin' }, config.jwtSecret, { expiresIn: '12h' });
     return res.json({ success: true, token });
   }
 

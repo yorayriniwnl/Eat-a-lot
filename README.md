@@ -5,7 +5,7 @@
 | Surface / claim | State | Boundary |
 |---|---|---|
 | Public menu, cart, settings, and order submission | VERIFIED | Express routes and seeded SQLite are wired locally. |
-| Admin panel and JWT auth | DEMO | Local control surface; default credentials must be replaced before deployment. |
+| Admin panel and JWT auth | DEMO | Development may use explicit local defaults; production fails closed unless admin credentials and JWT secret are configured. |
 | Seeded catalog and food imagery | REPORTED | Repository assets and database seed are the source of truth. |
 | WhatsApp and Instagram handoff | EXPERIMENTAL | External destinations depend on configured environment values. |
 | Vercel serverless entrypoint | UNVERIFIED | Hosted health and ephemeral SQLite behavior require deployment verification. |
@@ -40,10 +40,7 @@ Local URLs:
 - Site: `http://localhost:3000`
 - Admin: `http://localhost:3000/admin`
 
-Default admin credentials come from `.env`:
-
-- Username: `admin`
-- Password: `admin`
+For local development only, the app falls back to `admin / admin` when admin environment variables are absent. Production does **not** use those defaults: set `ADMIN_USERNAME`, `ADMIN_PASSWORD`, and a strong `JWT_SECRET` or admin authentication remains unavailable.
 
 ## Project structure
 
@@ -102,9 +99,9 @@ eat-a-lot/
 ## Environment variables
 
 - `PORT` - local server port
-- `JWT_SECRET` - JWT signing secret for admin auth
-- `ADMIN_USERNAME` - admin username
-- `ADMIN_PASSWORD` - admin password
+- `JWT_SECRET` - JWT signing secret for admin auth; required in production
+- `ADMIN_USERNAME` - admin username; required in production
+- `ADMIN_PASSWORD` - admin password; required in production
 - `WHATSAPP_NUMBER` - WhatsApp number without `+`
 - `WHATSAPP_CATALOG_URL` - public WhatsApp catalog link
 - `INSTAGRAM_URL` - Instagram profile URL
