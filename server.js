@@ -9,7 +9,11 @@ const MAX_PORT_FALLBACKS = 10;
 function logStartup(port) {
   console.log(`\nEat A Lot server running at http://localhost:${port}`);
   console.log(`Admin panel at http://localhost:${port}/admin`);
-  console.log(`Default login - ${process.env.ADMIN_USERNAME || 'admin'} / ${process.env.ADMIN_PASSWORD || 'admin'}\n`);
+  if (process.env.NODE_ENV === 'production') {
+    console.log(`Admin auth - ${process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD && process.env.JWT_SECRET ? 'configured' : 'DISABLED: set ADMIN_USERNAME, ADMIN_PASSWORD, and JWT_SECRET'}\n`);
+  } else {
+    console.log('Admin auth - local demo defaults apply only when env credentials are unset\n');
+  }
 }
 
 function startServer(port, fallbacksRemaining = MAX_PORT_FALLBACKS) {
