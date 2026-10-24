@@ -28,6 +28,23 @@ The storefront and admin panel follow the YOR visual contract: `#000000` void,
 
 Eat A Lot is a full-stack food ordering site with a public storefront, a JWT-protected admin panel, WhatsApp checkout, and a seeded SQLite catalog.
 
+<!-- YOR REDLINE / EXPERIENCE V2 -->
+
+<a id="system-map"></a>
+## System map
+
+<div align="center"><picture><source media="(max-width: 600px)" srcset="docs/yor-redline-system-mobile.svg"/><img src="docs/yor-redline-system.svg" width="100%" alt="Menu to checkout: Browse food menu to Build shopping cart to Send checkout order to Manage admin data"/></picture></div>
+
+| Project signal | Documented scope |
+| :--- | :--- |
+| **Current maturity** | LOCAL IMPLEMENTATION |
+| **Technical focus** | Express services, catalog and cart views, WhatsApp checkout, and an admin panel. |
+| **Evidence boundary** | The local application paths are distinct from production payment and credential safety. |
+
+**Navigate:** [What is wired together](#what-is-wired-together) · [Quick start](#quick-start) · [Project structure](#project-structure) · [API surface](#api-surface) · [Environment variables](#environment-variables) · [Deployment notes](#deployment-notes)
+
+<!-- END YOR REDLINE / EXPERIENCE V2 -->
+
 ## What is wired together
 
 - Public site settings now drive the live brand, status, hours, address, WhatsApp links, and footer copy.
